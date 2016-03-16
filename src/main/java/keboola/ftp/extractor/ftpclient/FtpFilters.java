@@ -41,7 +41,7 @@ public class FtpFilters {
     /**
      * Accepts all (non-null) FTPFile csv files entries.
      */
-    public static final FTPFileFilter JUSTCSVFILES_WITH_PREFIX(String prefix) {
+    public static final FTPFileFilter JUSTCSVFILES_WITH_PREFIX(final String prefix) {
         return new FTPFileFilter() {
             @Override
             public boolean accept(FTPFile file) {
@@ -56,7 +56,7 @@ public class FtpFilters {
         };
     }
 
-    public static final FTPFileFilter CSVFILES_WITH_PREFIX_CHANGED_SINCE(Date changedSince, String prefix) {
+    public static final FTPFileFilter CSVFILES_WITH_PREFIX_CHANGED_SINCE(final Date changedSince, final String prefix) {
         return new FTPFileFilter() {
             @Override
             public boolean accept(FTPFile file) {
@@ -78,7 +78,7 @@ public class FtpFilters {
      * @param changedSince
      * @return
      */
-    public static final FTPFileFilter CSVFILES_CHANGED_SINCE(Date changedSince) {
+    public static final FTPFileFilter CSVFILES_CHANGED_SINCE(final Date changedSince) {
         return new FTPFileFilter() {
             @Override
             public boolean accept(FTPFile file) {
@@ -96,7 +96,7 @@ public class FtpFilters {
      * @param changedSince
      * @return
      */
-    public static final FTPFileFilter FILES_CHANGED_SINCE(Date changedSince) {
+    public static final FTPFileFilter FILES_CHANGED_SINCE(final Date changedSince) {
         return new FTPFileFilter() {
             @Override
             public boolean accept(FTPFile file) {
@@ -121,7 +121,7 @@ public class FtpFilters {
      * @param prevDownFiles
      * @return
      */
-    public static final FTPFileFilter FILES_CHANGED_SINCE(Map<String, Date> prevDownFiles) {
+    public static final FTPFileFilter FILES_CHANGED_SINCE(final Map<String, Date> prevDownFiles) {
         return new FTPFileFilter() {
             @Override
             public boolean accept(FTPFile file) {
