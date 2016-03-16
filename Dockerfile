@@ -18,7 +18,7 @@ RUN yum -y install apache-maven
 
 WORKDIR /home
 
-ENV JAVA_HOME /usr/lib/jvm/jre-1.7.0
+ENV JAVA_HOME /usr/lib/jvm/jre-1.8.0
 RUN git clone https://github.com/davidesner/keboola-ftp-extractor.git ./  
 RUN mvn compile
 
