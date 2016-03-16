@@ -61,11 +61,6 @@ delimiter and enclosure is default `,` and `“`.
             "ftpPath": "downloads2",
             "sapiPath": "out.c-main.mytable2",
             "pkey": "asd"
-          },
-          {
-            "ftpPath": "Email Type",
-            "sapiPath": "Opt In Date",
-            "pkey": "asd"
           }
         ]
       }
