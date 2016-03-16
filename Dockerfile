@@ -15,9 +15,10 @@ RUN yum -y update && \
 RUN yum -y install wget
 RUN wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
 RUN yum -y install apache-maven
+#install java 8 jdk
 RUN yum -y install java-1.8.0-openjdk-devel
 WORKDIR /home
-
+#set java env variable(?why)
 ENV JAVA_HOME /usr/lib/jvm/jre-1.8.0    
 RUN git clone https://github.com/davidesner/keboola-ftp-extractor.git ./  
 RUN mvn compile
