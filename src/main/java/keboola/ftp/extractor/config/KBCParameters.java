@@ -40,7 +40,7 @@ public class KBCParameters {
     private String dateFrom;
 
     public KBCParameters() {
-        parametersMap = new HashMap<>();
+        parametersMap = new HashMap();
 
     }
 
@@ -48,7 +48,7 @@ public class KBCParameters {
     public KBCParameters(@JsonProperty("ftpUrl") String ftpUrl, @JsonProperty("user") String user, @JsonProperty("#pass") String pass,
             @JsonProperty("dateFrom") int daysInterval, @JsonProperty("dateTo") String dateTo,
             @JsonProperty("mappings") ArrayList<FtpMapping> mappings) throws ParseException {
-        parametersMap = new HashMap<>();
+        parametersMap = new HashMap();
         this.ftpUrl = ftpUrl;
         this.user = user;
         this.pass = pass;
