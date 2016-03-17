@@ -73,6 +73,8 @@ public class Extractor {
             } catch (IOException ex) {
                 Logger.getLogger(Extractor.class.getName()).log(Level.SEVERE, null, ex);
             }
+        } else {
+            System.out.println("State file does not exist. (first run?)");
         }
 
         //get user mappings
