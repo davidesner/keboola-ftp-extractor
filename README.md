@@ -61,18 +61,13 @@ delimiter and enclosure is default `,` and `“`.
             "ftpPath": "downloads2",
             "sapiPath": "out.c-main.mytable2",
             "pkey": "asd"
-          },
-          {
-            "ftpPath": "Email Type",
-            "sapiPath": "Opt In Date",
-            "pkey": "asd"
           }
         ]
       }
       
 #### Use case 2
 
-Downlad all csv files in the `downloads` directory which start with orders. e.g. files `orders_1-1-12`, `orders-5` will be downloaded and uploaded to specified table `out.c-main.order`.
+Downlad all csv files in the `downloads` directory whose name start with `orders`. e.g. files `orders_1-1-12`, `orders-5` will be downloaded and uploaded to specified table `out.c-main.order`.
 
     {
         "user": "user1",
