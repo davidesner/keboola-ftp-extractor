@@ -21,7 +21,9 @@ import keboola.ftp.extractor.ftpclient.FtpException;
 import keboola.ftp.extractor.state.VisitedFolder;
 import keboola.ftp.extractor.state.VisitedFoldersList;
 import keboola.ftp.extractor.state.YamlStateWriter;
+import keboola.ftp.extractor.utils.CsvFileMerger;
 import keboola.ftp.extractor.utils.CsvUtils;
+import keboola.ftp.extractor.utils.MergeException;
 
 /**
  *
@@ -38,7 +40,7 @@ public class Extractor {
         }
         String dataPath = args[0];
 
-        String outTablesPath = dataPath + File.separator + "in" + File.separator + "tables"; //parse config
+        String outTablesPath = dataPath + File.separator + "out" + File.separator + "tables"; //parse config
 
         KBCConfig config = null;
 
@@ -65,7 +67,7 @@ public class Extractor {
             System.exit(1);
         }
         //retrieve stateFile
-        File stateFile = new File(dataPath + File.separator + "out" + File.separator + "state.yml");
+        File stateFile = new File(dataPath + File.separator + "in" + File.separator + "state.yml");
         VisitedFoldersList visitedFolders = null;
         if (stateFile.exists()) {
             try {
@@ -95,8 +97,10 @@ public class Extractor {
         /*Download all files and generate manifests*/
         System.out.println("Downloading files...");
         int count = 0;
+        int index = 0;
         try {
             for (FtpMapping mapping : mappings) {
+                index++;
                 //set download parameters according to previous runs
                 if (visitedFolders != null) {
                     VisitedFolder vf = visitedFolders.getFolderByPath(mapping.getFtpPath());
@@ -126,7 +130,12 @@ public class Extractor {
                 VisitedFolder f = new VisitedFolder(mapping.getFtpPath(), retrievedFiles, currDate);
                 visitedFoldersCurrent.add(f);
 
-                //TODO: mergeFiles
+//                try {
+//                    //TODO: mergeFiles
+//                    CsvFileMerger.mergeFiles(retrievedFiles.keySet(), dataPath, outTablesPath, "mergedcsv" + index + ".csv", mapping.getDelimiter().charAt(0), mapping.getEnclosure().charAt(0));
+//                } catch (MergeException ex) {
+//                    Logger.getLogger(Extractor.class.getName()).log(Level.SEVERE, null, ex);
+//                }
                 //build manifest files
                 for (String fileName : retrievedFiles.keySet()) {
                     ManifestFile manFile = new ManifestFile(mapping.getSapiPath(), mapping.isIncremental(), mapping.getPkey(), mapping.getDelimiter(), mapping.getEnclosure());
