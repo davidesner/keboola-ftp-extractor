@@ -104,10 +104,16 @@ public class Extractor {
                 index++;
                 //set download parameters according to previous runs
                 if (visitedFolders != null) {
-                    if (visitedFolders.getVisitedFolders() != null) {
-                        VisitedFolder vf = visitedFolders.getFolderByPath(mapping.getFtpPath());
-                        prevImpFiles = vf.getFileMap();
-                        lastRun = vf.getLastRun();
+                    try {
+                        if (visitedFolders.getVisitedFolders() != null) {
+                            VisitedFolder vf = visitedFolders.getFolderByPath(mapping.getFtpPath());
+                            if (vf != null) {
+                                prevImpFiles = vf.getFileMap();
+                                lastRun = vf.getLastRun();
+                            }
+                        }
+                    } catch (NullPointerException ex) {
+                        System.out.println("No mathing state.");
                     }
                 }
 
@@ -166,11 +172,11 @@ public class Extractor {
                 }
 
             }
-        } catch (Exception ex) {
+        } catch (FtpException ex) {
             System.out.println("Failed to download files. " + ex.getMessage());
             System.err.println("Failed to download files. " + ex.getMessage());
-            ex.printStackTrace();
-            System.exit(1);
+            //ex.printStackTrace();
+            System.exit(ex.getSeverity());
         } finally {
             try {
                 ftpClient.disconnect();
