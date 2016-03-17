@@ -154,6 +154,7 @@ public class Extractor {
                 } catch (IOException ex) {
                     System.out.println("Failed to build manifest file. " + ex.getMessage());
                     System.err.println("Failed to build manifest file. " + ex.getMessage());
+
                     System.exit(2);
                 }
 
@@ -165,10 +166,11 @@ public class Extractor {
                 }
 
             }
-        } catch (FtpException ex) {
+        } catch (Exception ex) {
             System.out.println("Failed to download files. " + ex.getMessage());
             System.err.println("Failed to download files. " + ex.getMessage());
-            System.exit(ex.getSeverity());
+            ex.printStackTrace();
+            System.exit(1);
         } finally {
             try {
                 ftpClient.disconnect();
