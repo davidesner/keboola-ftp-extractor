@@ -19,7 +19,7 @@ public class FtpMapping {
 //default 1
     private final Integer incremental;
 //required if incremental = 1
-    private final String pkey;
+    private final String[] pkey;
     private String prefix;
 
     private String delimiter;
@@ -27,7 +27,7 @@ public class FtpMapping {
 
     public FtpMapping(@JsonProperty("ftpPath") String ftpPath, @JsonProperty("sapiPath") String sapiPath,
             @JsonProperty("isFolder") Integer isFolder, @JsonProperty("incremental") Integer incremental,
-            @JsonProperty("pkey") String pkey, @JsonProperty("prefix") String prefix, @JsonProperty("delimiter") String delimiter, @JsonProperty("enclosure") String enclosure) {
+            @JsonProperty("pkey") String[] pkey, @JsonProperty("prefix") String prefix, @JsonProperty("delimiter") String delimiter, @JsonProperty("enclosure") String enclosure) {
         this.ftpPath = ftpPath;
         this.sapiPath = sapiPath;
         this.delimiter = delimiter;
@@ -108,7 +108,7 @@ public class FtpMapping {
         return incremental;
     }
 
-    public String getPkey() {
+    public String[] getPkey() {
         return pkey;
     }
 

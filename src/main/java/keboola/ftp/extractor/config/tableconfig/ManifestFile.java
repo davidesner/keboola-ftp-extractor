@@ -24,11 +24,11 @@ public class ManifestFile {
     @JsonProperty("enclosure")
     private String enclosure;
     @JsonProperty("primary_key")
-    private String primaryKey;
+    private String[] primaryKey;
 
     @JsonCreator
     public ManifestFile(@JsonProperty("destination") String destination, @JsonProperty("incremental") boolean incremental,
-            @JsonProperty("primary_key") String primaryKey, @JsonProperty("delimiter") String delimiter, @JsonProperty("enclosure") String enclosure) {
+            @JsonProperty("primary_key") String[] primaryKey, @JsonProperty("delimiter") String delimiter, @JsonProperty("enclosure") String enclosure) {
 
         this.destination = destination;
         this.incremental = incremental;
@@ -46,11 +46,11 @@ public class ManifestFile {
         }
     }
 
-    public String getPrimaryKey() {
+    public String[] getPrimaryKey() {
         return primaryKey;
     }
 
-    public void setPrimaryKey(String primaryKey) {
+    public void setPrimaryKey(String[] primaryKey) {
         this.primaryKey = primaryKey;
     }
 
