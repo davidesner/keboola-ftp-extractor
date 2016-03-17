@@ -34,7 +34,7 @@ Configuration requires in default 3 basic credential parameters (`ftpUrl`, `user
     - **incremental** – (DEFAULT 1) specifies whether
 		to upload incrementally. If not set to 0, the pkey must be
 		specified. 		 
-    - **pkey** – (REQ) – name of the primary key column, required (by default0  if incremental is set to 1 
+    - **pkey** – (REQ) – array of namees of the primary key columns, required (by default0  if incremental is set to 1 
     - **prefix** – optional prefix string of files to	download and group into single table 
     - **delimiter** – (DEFAULT ,) delimiter remote csv file	(default , ) 
     - **enclosure** – (DEFAULT ") enclosure of remote csv file
@@ -55,12 +55,12 @@ delimiter and enclosure is default `,` and `“`.
           {
             "ftpPath": "downloads",
             "sapiPath": "out.c-main.mytable1",
-            "pkey": "ID"
+            "pkey": ["ID"]
           },
           {
             "ftpPath": "downloads2",
             "sapiPath": "out.c-main.mytable2",
-            "pkey": "asd"
+            "pkey": ["asd"]
           }
         ]
       }
@@ -76,7 +76,7 @@ Downlad all csv files in the `downloads` directory whose name start with `orders
           {
             "ftpPath": "downloads",
             "sapiPath": "out.c-main.orders",
-            "pkey": "ID",
+            "pkey": ["ID"],
             "prefix": "orders”,
           }]
       }
@@ -92,6 +92,6 @@ Downlad single csv file from remote path
             "ftpPath": "downloads/single.csv",
             "sapiPath": "out.c-main.single",
             "isFolder" : 0,
-            "pkey": "ID"
+            "pkey": ["ID"]
           }]
       }
