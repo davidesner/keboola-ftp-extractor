@@ -104,9 +104,11 @@ public class Extractor {
                 index++;
                 //set download parameters according to previous runs
                 if (visitedFolders != null) {
-                    VisitedFolder vf = visitedFolders.getFolderByPath(mapping.getFtpPath());
-                    prevImpFiles = vf.getFileMap();
-                    lastRun = vf.getLastRun();
+                    if (visitedFolders.getVisitedFolders() != null) {
+                        VisitedFolder vf = visitedFolders.getFolderByPath(mapping.getFtpPath());
+                        prevImpFiles = vf.getFileMap();
+                        lastRun = vf.getLastRun();
+                    }
                 }
 
                 // TODO: handle other cases, i.e. isFolder=0,prefixes, dateFrom,dateTo
@@ -163,10 +165,10 @@ public class Extractor {
                 }
 
             }
-        } catch (FtpException ex) {
+        } catch (Exception ex) {
             System.out.println("Failed to download files. " + ex.getMessage());
             System.err.println("Failed to download files. " + ex.getMessage());
-            System.exit(ex.getSeverity());
+            System.exit(1);
         } finally {
             try {
                 ftpClient.disconnect();
