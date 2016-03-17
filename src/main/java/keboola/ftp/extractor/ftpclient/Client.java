@@ -192,14 +192,21 @@ public class Client {
         Map<String, Date> downloadedFiles = new HashMap();
         try {
             reconnectIfNeeded();
-            ftpClient.changeWorkingDirectory(remoteFolder);
+            if (remoteFolder != null) {
+                ftpClient.changeWorkingDirectory(remoteFolder);
+            }
             int returnCode = ftpClient.getReplyCode();
             if (returnCode == 550) {
                 throw new FtpException("Remote folder does not exist!");
             }
 
             fos = new FileOutputStream(localFilePath + File.separator + fileName);
+
+            if (ftpClient.changeWorkingDirectory(fileName)) {
+                throw new FtpException("Unable to download this file: " + fileName + ". It is a directory.");
+            }
             FTPFile[] files = ftpClient.listFiles(fileName);
+
             this.ftpClient.retrieveFile(fileName, fos);
             downloadedFiles.put(fileName, files[0].getTimestamp().getTime());
         } catch (IOException ex) {
