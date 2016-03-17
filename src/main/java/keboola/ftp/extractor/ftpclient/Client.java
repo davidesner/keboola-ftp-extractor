@@ -102,6 +102,31 @@ public class Client {
      * @throws FtpException
      */
     public Map<String, Date> downloadAllNewCsvFiles(String remoteFolder, String localFolderPath, Map<String, Date> prevImportedFiles, Date changedSince) throws FtpException {
+        //set ftp file filter accordingly
+        FTPFileFilter filter;
+        /*
+            if(prevImportedFiles!=null){
+                filter=FtpFilters.FILES_CHANGED_SINCE(prevImportedFiles);
+            }*/
+        if (changedSince != null) {
+            filter = FtpFilters.CSVFILES_CHANGED_SINCE(changedSince);
+        } else {
+            filter = FtpFilters.JUSTCSVFILES;
+        }
+        //get list of files to download
+
+        return downloadAllFilesByFilter(remoteFolder, localFolderPath, filter);
+    }
+
+    /**
+     *
+     * @param remoteFolder
+     * @param localFolderPath
+     * @param filter
+     * @return
+     * @throws FtpException
+     */
+    private Map<String, Date> downloadAllFilesByFilter(String remoteFolder, String localFolderPath, FTPFileFilter filter) throws FtpException {
         Map<String, Date> downloadedFiles = new HashMap();
 
         try {
@@ -116,19 +141,7 @@ public class Client {
                 throw new FtpException("Remote folder: '" + remoteFolder + "' does not exist or is not a folder!");
             }
 
-            //set ftp file filter accordingly
-            FTPFileFilter filter;
-            /*
-            if(prevImportedFiles!=null){
-                filter=FtpFilters.FILES_CHANGED_SINCE(prevImportedFiles);
-            }*/
-            if (changedSince != null) {
-                filter = FtpFilters.CSVFILES_CHANGED_SINCE(changedSince);
-            } else {
-                filter = FtpFilters.JUSTCSVFILES;
-            }
             //get list of files to download
-
             FTPFile[] files = ftpClient.listFiles(null, filter);
 
             for (FTPFile file : files) {
@@ -153,41 +166,16 @@ public class Client {
      * @throws FtpException
      */
     public Map<String, Date> downloadAllNewCsvFilesByPrefix(String remoteFolder, String localFolderPath, String prefix, Date changedSince) throws FtpException {
-        Map<String, Date> downloadedFiles = new HashMap();
+        //set ftp file filter accordingly
+        FTPFileFilter filter;
 
-        try {
-            reconnectIfNeeded();
-        } catch (IOException ex) {
-            throw new FtpException("Error connecting to ftp server. " + ex.getMessage());
+        if (changedSince != null) {
+            filter = FtpFilters.CSVFILES_WITH_PREFIX_CHANGED_SINCE(changedSince, prefix);
+        } else {
+            filter = FtpFilters.JUSTCSVFILES_WITH_PREFIX(prefix);
         }
-        try {
-            ftpClient.changeWorkingDirectory(remoteFolder);
-            int returnCode = ftpClient.getReplyCode();
-            if (returnCode == 550) {
-                throw new FtpException("Remote folder: '" + remoteFolder + "' does not exist or is not a folder!");
-            }
 
-            //set ftp file filter accordingly
-            FTPFileFilter filter;
-
-            if (changedSince != null) {
-                filter = FtpFilters.CSVFILES_WITH_PREFIX_CHANGED_SINCE(changedSince, prefix);
-            } else {
-                filter = FtpFilters.JUSTCSVFILES_WITH_PREFIX(prefix);
-            }
-            //get list of files to download
-
-            FTPFile[] files = ftpClient.listFiles(null, filter);
-
-            for (FTPFile file : files) {
-                downloadFile(ftpClient.printWorkingDirectory(), file.getName(), localFolderPath);
-                downloadedFiles.put(file.getName(), file.getTimestamp().getTime());
-            }
-
-        } catch (IOException ex) {
-            throw new FtpException("Error downloading files from folder: " + remoteFolder + ". " + ex.getMessage());
-        }
-        return downloadedFiles;
+        return downloadAllFilesByFilter(remoteFolder, localFolderPath, filter);
     }
 
     /**

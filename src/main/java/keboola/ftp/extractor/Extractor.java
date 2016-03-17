@@ -38,7 +38,7 @@ public class Extractor {
         }
         String dataPath = args[0];
 
-        String outTablesPath = dataPath + File.separator + "out" + File.separator + "tables"; //parse config
+        String outTablesPath = dataPath + File.separator + "in" + File.separator + "tables"; //parse config
 
         KBCConfig config = null;
 
@@ -126,6 +126,7 @@ public class Extractor {
                 VisitedFolder f = new VisitedFolder(mapping.getFtpPath(), retrievedFiles, currDate);
                 visitedFoldersCurrent.add(f);
 
+                //TODO: mergeFiles
                 //build manifest files
                 for (String fileName : retrievedFiles.keySet()) {
                     ManifestFile manFile = new ManifestFile(mapping.getSapiPath(), mapping.isIncremental(), mapping.getPkey(), mapping.getDelimiter(), mapping.getEnclosure());
