@@ -134,16 +134,16 @@ public class CsvFileMerger {
                 CSVReader csvreader = new CSVReader(freader, separator, enclosure);
                 headers = csvreader.readNext();
                 if (headers != null) {
-                    if (firstRun) {
-                        refFileName = fname;
-                        refHeader = headers.clone();
-                        //get header line
-                        fis = new FileInputStream(fPath);
-                        reader = new BufferedReader(new InputStreamReader(fis));
-                        headerLine = reader.readLine();
-                        reader.close();
-                    }
-                    if (Arrays.equals(headers, refHeader)) {
+
+                    refFileName = fname;
+                    refHeader = headers.clone();
+                    //get header line
+                    fis = new FileInputStream(fPath);
+                    reader = new BufferedReader(new InputStreamReader(fis));
+                    headerLine = reader.readLine();
+                    reader.close();
+
+                    if (!headerEquals(headers, refHeader)) {
                         throw new MergeException("Data structure of downloaded file: " + fname + " is different than first file: " + refFileName + ", cannot upload to a single SAPI table!");
                     }
 
@@ -163,5 +163,17 @@ public class CsvFileMerger {
         } catch (IOException ex) {
             throw new MergeException("Error reading csv file: " + currFile + " " + ex.getMessage());
         }
+    }
+
+    private static boolean headerEquals(String[] h1, String[] h2) {
+        if (h1.length != h2.length) {
+            return false;
+        }
+        for (int i = 0; i < h1.length; i++) {
+            if (!h1[i].equals(h2[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -23,6 +23,7 @@ import keboola.ftp.extractor.state.VisitedFoldersList;
 import keboola.ftp.extractor.state.YamlStateWriter;
 import keboola.ftp.extractor.utils.CsvFileMerger;
 import keboola.ftp.extractor.utils.CsvUtils;
+import keboola.ftp.extractor.utils.FileHandler;
 import keboola.ftp.extractor.utils.MergeException;
 
 /**
@@ -112,14 +113,14 @@ public class Extractor {
                 if (mapping.isFolder()) {
                     //download all csv files in case of whole folder
                     if (mapping.getPrefix() != null) {//in case of files by prefix
-                        retrievedFiles = ftpClient.downloadAllNewCsvFilesByPrefix(mapping.getFtpPath(), outTablesPath, mapping.getPrefix(), lastRun);
+                        retrievedFiles = ftpClient.downloadAllNewCsvFilesByPrefix(mapping.getFtpPath(), dataPath, mapping.getPrefix(), lastRun);
                     } else {//all files in folder
-                        retrievedFiles = ftpClient.downloadAllNewCsvFiles(mapping.getFtpPath(), outTablesPath, null, lastRun);
+                        retrievedFiles = ftpClient.downloadAllNewCsvFiles(mapping.getFtpPath(), dataPath, null, lastRun);
                     }
                 } else {
                     File f = new File(mapping.getFtpPath());
 
-                    retrievedFiles = ftpClient.downloadFile(f.getParent(), f.getName(), outTablesPath);
+                    retrievedFiles = ftpClient.downloadFile(f.getParent(), f.getName(), dataPath);
 
                 }
 
@@ -130,30 +131,37 @@ public class Extractor {
                 VisitedFolder f = new VisitedFolder(mapping.getFtpPath(), retrievedFiles, currDate);
                 visitedFoldersCurrent.add(f);
 
-//                try {
-//                    //TODO: mergeFiles
-//                    CsvFileMerger.mergeFiles(retrievedFiles.keySet(), dataPath, outTablesPath, "mergedcsv" + index + ".csv", mapping.getDelimiter().charAt(0), mapping.getEnclosure().charAt(0));
-//                } catch (MergeException ex) {
-//                    Logger.getLogger(Extractor.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-                //build manifest files
-                for (String fileName : retrievedFiles.keySet()) {
-                    ManifestFile manFile = new ManifestFile(mapping.getSapiPath(), mapping.isIncremental(), mapping.getPkey(), mapping.getDelimiter(), mapping.getEnclosure());
-                    try {
-                        ManifestBuilder.buildManifestFile(manFile, outTablesPath, fileName);
-                    } catch (IOException ex) {
-                        System.out.println("Failed to build manifest file. " + ex.getMessage());
-                        System.err.println("Failed to build manifest file. " + ex.getMessage());
-                        System.exit(2);
-                    }
+                if (count == 0) {
+                    continue;
+                }
+                String outputFileName = "mergedcsv" + index + ".csv";
+                try {
+                    System.out.println("Merging files: " + retrievedFiles.keySet());
+                    //mergeFiles
+                    CsvFileMerger.mergeFiles(retrievedFiles.keySet(), dataPath, outTablesPath, outputFileName, mapping.getDelimiter().charAt(0), mapping.getEnclosure().charAt(0));
+                } catch (MergeException ex) {
+                    System.out.println("Failed to merge files. " + ex.getMessage());
+                    System.err.println("Failed to merge files. " + ex.getMessage());
+                    System.exit(1);
+                }
+
+                //build man file
+                ManifestFile manFile = new ManifestFile(mapping.getSapiPath(), mapping.isIncremental(), mapping.getPkey(), mapping.getDelimiter(), mapping.getEnclosure());
+                try {
+                    ManifestBuilder.buildManifestFile(manFile, outTablesPath, outputFileName);
+                } catch (IOException ex) {
+                    System.out.println("Failed to build manifest file. " + ex.getMessage());
+                    System.err.println("Failed to build manifest file. " + ex.getMessage());
+                    System.exit(2);
                 }
 
                 try {
-                    //check for validity of composed csvs. Doesnt stop processing yet.
-                    CsvUtils.dataStructureMatch(retrievedFiles.keySet(), outTablesPath);
-                } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
+                    //remove all temp files
+                    FileHandler.deleteFilesInFolder(retrievedFiles.keySet(), dataPath);
+                } catch (IOException ex) {
+                    Logger.getLogger(Extractor.class.getName()).log(Level.SEVERE, null, ex);
                 }
+
             }
         } catch (FtpException ex) {
             System.out.println("Failed to download files. " + ex.getMessage());

@@ -69,6 +69,10 @@ public class FtpMapping {
     }
 
     public String getDelimiter() {
+        //default if null
+        if (delimiter == null) {
+            return ",";
+        }
         return delimiter;
     }
 
@@ -77,6 +81,11 @@ public class FtpMapping {
     }
 
     public String getEnclosure() {
+        //default if null
+        if (enclosure == null) {
+            return "\"";
+        }
+
         return enclosure;
     }
 
