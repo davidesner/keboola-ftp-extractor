@@ -23,4 +23,4 @@ ENV JAVA_HOME /usr/lib/jvm/jre-1.8.0
 RUN git clone https://github.com/davidesner/keboola-ftp-extractor.git ./  
 RUN mvn compile
 
-ENTRYPOINT mvn exec:java -Dexec.args=/data  
+ENTRYPOINT mvn -q exec:java -Dexec.args=/data  
