@@ -165,10 +165,10 @@ public class Extractor {
                 }
 
             }
-        } catch (Exception ex) {
+        } catch (FtpException ex) {
             System.out.println("Failed to download files. " + ex.getMessage());
             System.err.println("Failed to download files. " + ex.getMessage());
-            System.exit(1);
+            System.exit(ex.getSeverity());
         } finally {
             try {
                 ftpClient.disconnect();
