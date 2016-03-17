@@ -40,7 +40,7 @@ public class ManifestFile {
             this.delimiter = delimiter;
         }
         if (enclosure == null) {
-            this.enclosure = "";
+            this.enclosure = "\"";
         } else {
             this.enclosure = enclosure;
         }
