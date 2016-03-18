@@ -113,7 +113,7 @@ public class Extractor {
                             }
                         }
                     } catch (NullPointerException ex) {
-                        System.out.println("No mathing state.");
+                        System.out.println("No matching state.");
                     }
                 }
 
@@ -121,14 +121,14 @@ public class Extractor {
                 if (mapping.isFolder()) {
                     //download all csv files in case of whole folder
                     if (mapping.getPrefix() != null) {//in case of files by prefix
-                        retrievedFiles = ftpClient.downloadAllNewCsvFilesByPrefix(mapping.getFtpPath(), dataPath, mapping.getPrefix(), lastRun);
+                        retrievedFiles = ftpClient.downloadAllNewCsvFilesByPrefix(mapping.getFtpPath(), outTablesPath, mapping.getPrefix(), lastRun);
                     } else {//all files in folder
-                        retrievedFiles = ftpClient.downloadAllNewCsvFiles(mapping.getFtpPath(), dataPath, null, lastRun);
+                        retrievedFiles = ftpClient.downloadAllNewCsvFiles(mapping.getFtpPath(), outTablesPath, null, lastRun);
                     }
                 } else {
                     File f = new File(mapping.getFtpPath());
 
-                    retrievedFiles = ftpClient.downloadFile(f.getParent(), f.getName(), dataPath);
+                    retrievedFiles = ftpClient.downloadFile(f.getParent(), f.getName(), outTablesPath);
 
                 }
 
@@ -142,33 +142,23 @@ public class Extractor {
                 if (count == 0) {
                     continue;
                 }
-                String outputFileName = "mergedcsv" + index + ".csv";
                 try {
-                    System.out.println("Merging files: " + retrievedFiles.keySet());
-                    //mergeFiles
-                    CsvFileMerger.mergeFiles(retrievedFiles.keySet(), dataPath, outTablesPath, outputFileName, mapping.getDelimiter().charAt(0), mapping.getEnclosure().charAt(0));
+                    CsvFileMerger.dataStructureMatch(retrievedFiles.keySet(), outTablesPath, mapping.getDelimiter().charAt(0), mapping.getEnclosure().charAt(0));
                 } catch (MergeException ex) {
                     System.out.println("Failed to merge files. " + ex.getMessage());
                     System.err.println("Failed to merge files. " + ex.getMessage());
                     System.exit(1);
                 }
-
-                //build man file
-                ManifestFile manFile = new ManifestFile(mapping.getSapiPath(), mapping.isIncremental(), mapping.getPkey(), mapping.getDelimiter(), mapping.getEnclosure());
-                try {
-                    ManifestBuilder.buildManifestFile(manFile, outTablesPath, outputFileName);
-                } catch (IOException ex) {
-                    System.out.println("Failed to build manifest file. " + ex.getMessage());
-                    System.err.println("Failed to build manifest file. " + ex.getMessage());
-
-                    System.exit(2);
-                }
-
-                try {
-                    //remove all temp files
-                    FileHandler.deleteFilesInFolder(retrievedFiles.keySet(), dataPath);
-                } catch (IOException ex) {
-                    Logger.getLogger(Extractor.class.getName()).log(Level.SEVERE, null, ex);
+                //build manifest files
+                for (String fileName : retrievedFiles.keySet()) {
+                    ManifestFile manFile = new ManifestFile(mapping.getSapiPath(), mapping.isIncremental(), mapping.getPkey(), mapping.getDelimiter(), mapping.getEnclosure());
+                    try {
+                        ManifestBuilder.buildManifestFile(manFile, outTablesPath, fileName);
+                    } catch (IOException ex) {
+                        System.out.println("Failed to build manifest file. " + ex.getMessage());
+                        System.err.println("Failed to build manifest file. " + ex.getMessage());
+                        System.exit(2);
+                    }
                 }
 
             }
