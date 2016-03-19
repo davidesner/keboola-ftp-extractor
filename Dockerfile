@@ -20,7 +20,8 @@ RUN yum -y install java-1.8.0-openjdk-devel
 WORKDIR /home
 #set java env variable(?why)
 ENV JAVA_HOME /usr/lib/jvm/jre-1.8.0    
-RUN git clone https://github.com/davidesner/keboola-ftp-extractor.git ./  
+#RUN git clone https://github.com/davidesner/keboola-ftp-extractor.git ./  
+RUN git clone https://github.com/davidesner/keboola-ftp-extractor.git -b versionMerger --single ./
 RUN mvn compile
 
 ENTRYPOINT mvn -q exec:java -Dexec.args=/data  

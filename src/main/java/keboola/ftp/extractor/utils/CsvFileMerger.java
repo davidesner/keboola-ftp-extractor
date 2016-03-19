@@ -76,7 +76,8 @@ public class CsvFileMerger {
                 FileChannel in = fis.getChannel();
                 long pos = 0;
                 //set position according to header (first run is set by writer)
-                pos = headerLine.length() + 2;//+2 because of NL character
+                System.out.println("NewLine char length: " + System.getProperty("line.separator").getBytes().length);
+                pos = headerLine.length() + System.getProperty("line.separator").getBytes().length;//+2 because of NL character
 
                 for (long p = pos, l = in.size(); p < l;) {
                     p += in.transferTo(p, l - p, out);
