@@ -11,11 +11,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -50,7 +49,8 @@ public class CsvFileMerger {
         } catch (MergeException ex) {
             throw ex;
         }
-        long secondLinePos = 0;
+
+        char[] headerChars;
         for (String fName : fileNames) {
             FileInputStream fis = null;
             String fPath = srcFolderPath + File.separator + fName;
@@ -58,10 +58,12 @@ public class CsvFileMerger {
                 File file = new File(fPath);
                 //retrieve file header
                 fis = new FileInputStream(file);
-                reader = new BufferedReader(new InputStreamReader(fis));
-                headerLine = reader.readLine();
+//                reader = new BufferedReader(new InputStreamReader(fis));
 
-                if (headerLine == null) {
+                headerChars = readLineWithNL(fis);
+                headerLine = new String(headerChars);
+
+                if (headerChars == null) {
                     continue;
                 }
                 //write header from first file and retrieve filechannel 
@@ -69,20 +71,17 @@ public class CsvFileMerger {
                     fout = new FileOutputStream(outFile);
                     BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fout));
                     bw.write(headerLine);
-                    bw.newLine();
+//                    bw.newLine();
                     bw.flush();
-                    //get position of the second line
-                    secondLinePos = getSecondLinePosition(fis);
                     out = fout.getChannel();
 
                 }
                 //write to outFile using NIO
                 FileChannel in = fis.getChannel();
-                System.out.println("Curr pos: " + in.position());
                 long pos = 0;
                 //set position according to header (first run is set by writer)
-                System.out.println("NewLine char length: " + System.getProperty("line.separator").getBytes().length);
-                pos = secondLinePos;//+2 because of NL character
+                System.out.println("Curr pos: " + in.position());
+                pos = in.position() - 1;//+2 because of NL character
 
                 for (long p = pos, l = in.size(); p < l;) {
                     p += in.transferTo(p, l - p, out);
@@ -97,7 +96,7 @@ public class CsvFileMerger {
                 throw new MergeException("Error merging files. " + ex.getMessage());
             } finally {
                 try {
-                    reader.close();
+//                    reader.close();
                     fis.close();
 
                 } catch (IOException ex) {
@@ -192,19 +191,37 @@ public class CsvFileMerger {
         }
     }
 
-    private static long getSecondLinePosition(FileInputStream in) {
+    private static char[] readLineWithNL(FileInputStream in) {
         try {
+            int hLen = 0;
+
+            ArrayList<Character> chars = new ArrayList();
             int ch = in.read();
+            chars.add((char) ch);
             while (!isNL(ch)) {
                 ch = in.read();
+                chars.add((char) ch);
             }
-            while (isNL(ch)) {
+            boolean isNl = true;
+            while (isNl) {
                 ch = in.read();
+                if (isNL(ch)) {
+                    chars.add((char) ch);
+                    isNl = true;
+                } else {
+                    isNl = false;
+                }
+                hLen++;
             }
-            return in.getChannel().position() - 1;
+            char[] charArray = new char[chars.size()];
+            for (int i = 0; i < chars.size(); i++) {
+                charArray[i] = chars.get(i);
+            }
+            return charArray;//in.getChannel().position() - 1;
         } catch (IOException ex) {
             Logger.getLogger(CsvFileMerger.class.getName()).log(Level.SEVERE, null, ex);
-            return 0;
+            return null;
         }
     }
+
 }
