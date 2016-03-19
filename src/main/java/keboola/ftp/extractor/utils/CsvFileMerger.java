@@ -11,8 +11,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,7 +50,7 @@ public class CsvFileMerger {
         } catch (MergeException ex) {
             throw ex;
         }
-
+        long secondLinePos = 0;
         for (String fName : fileNames) {
             FileInputStream fis = null;
             String fPath = srcFolderPath + File.separator + fName;
@@ -69,15 +71,18 @@ public class CsvFileMerger {
                     bw.write(headerLine);
                     bw.newLine();
                     bw.flush();
+                    //get position of the second line
+                    secondLinePos = getSecondLinePosition(fis);
                     out = fout.getChannel();
 
                 }
                 //write to outFile using NIO
                 FileChannel in = fis.getChannel();
+                System.out.println("Curr pos: " + in.position());
                 long pos = 0;
                 //set position according to header (first run is set by writer)
                 System.out.println("NewLine char length: " + System.getProperty("line.separator").getBytes().length);
-                pos = headerLine.length() + System.getProperty("line.separator").getBytes().length;//+2 because of NL character
+                pos = secondLinePos;//+2 because of NL character
 
                 for (long p = pos, l = in.size(); p < l;) {
                     p += in.transferTo(p, l - p, out);
@@ -176,5 +181,30 @@ public class CsvFileMerger {
             }
         }
         return true;
+    }
+
+    private static final boolean isNL(int character) {
+        if ((character == -1)) {
+            return false;
+        } else {
+            return ((((char) character == '\n')
+                    || ((char) character == '\r')));
+        }
+    }
+
+    private static long getSecondLinePosition(FileInputStream in) {
+        try {
+            int ch = in.read();
+            while (!isNL(ch)) {
+                ch = in.read();
+            }
+            while (isNL(ch)) {
+                ch = in.read();
+            }
+            return in.getChannel().position() - 1;
+        } catch (IOException ex) {
+            Logger.getLogger(CsvFileMerger.class.getName()).log(Level.SEVERE, null, ex);
+            return 0;
+        }
     }
 }
