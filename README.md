@@ -31,6 +31,7 @@ Configuration requires in default 3 basic credential parameters (`ftpUrl`, `user
 		will be uploaded (e.g. out.c-main.mytable) 
     - **isFolder** – (DEFAULT 0) indicator whether to
 		download a single file or the whole folder 
+    - **extension** - (DEFAULT `csv`) optional parameter specifying custom extension of files to retrieve. i.e. `txt`. If not specified all files with `csv` extension will be downloaded by default.
     - **incremental** – (DEFAULT 1) specifies whether
 		to upload incrementally. If not set to 0, the pkey must be
 		specified. 		 
@@ -67,7 +68,7 @@ delimiter and enclosure is default `,` and `“`.
       
 #### Use case 2
 
-Downlad all csv files in the `downloads` directory whose name start with `orders`. e.g. files `orders_1-1-12`, `orders-5` will be downloaded and uploaded to specified table `out.c-main.order`.
+Downlad all csv files in the `downloads` directory whose name start with `orders`. e.g. files `orders_1-1-12.csv`, `orders-5.csv` will be downloaded and uploaded to specified table `out.c-main.order`.
 
     {
         "user": "user1",
@@ -81,6 +82,22 @@ Downlad all csv files in the `downloads` directory whose name start with `orders
           }]
       }
 #### Use case 3
+
+Downlad all csv files in the `downloads` directory whose name start with `orders` and its' extension is `txt`. e.g. files `orders_1-1-12.txt`, `orders-5.txt` will be downloaded and uploaded to specified table `out.c-main.order`.
+
+    {
+        "user": "user1",
+        "#pass": "mypassword",
+        "mappings": [
+          {
+            "ftpPath": "downloads",
+            "sapiPath": "out.c-main.orders",
+            "pkey": ["ID"],
+            "prefix": "orders”,
+            "extension": "txt" 
+          }]
+      }
+#### Use case 4
 Downlad single csv file from remote path
 `downloads/single.csv`. 
 
