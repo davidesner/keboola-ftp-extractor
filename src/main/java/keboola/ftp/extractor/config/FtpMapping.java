@@ -25,17 +25,27 @@ public class FtpMapping {
     private String delimiter;
     private String enclosure;
 
+    private String extension;
+
     public FtpMapping(@JsonProperty("ftpPath") String ftpPath, @JsonProperty("sapiPath") String sapiPath,
             @JsonProperty("isFolder") Integer isFolder, @JsonProperty("incremental") Integer incremental,
-            @JsonProperty("pkey") String[] pkey, @JsonProperty("prefix") String prefix, @JsonProperty("delimiter") String delimiter, @JsonProperty("enclosure") String enclosure) {
+            @JsonProperty("pkey") String[] pkey, @JsonProperty("prefix") String prefix, @JsonProperty("delimiter") String delimiter,
+            @JsonProperty("enclosure") String enclosure, @JsonProperty("extension") String extension) {
         this.ftpPath = ftpPath;
         this.sapiPath = sapiPath;
         this.delimiter = delimiter;
         this.enclosure = enclosure;
+
         if (isFolder != null) {
             this.isFolder = isFolder;
         } else {
             this.isFolder = 1;
+        }
+//set extension, set to default csv, if isFolder is not 1
+        if (extension != null && this.isFolder == 1) {
+            this.extension = extension;
+        } else {
+            this.extension = "csv";
         }
         if (incremental != null) {
             this.incremental = incremental;
@@ -66,6 +76,14 @@ public class FtpMapping {
             throw new ValidationException(message);
         }
         return true;
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 
     public String getDelimiter() {

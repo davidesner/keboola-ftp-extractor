@@ -95,13 +95,14 @@ public class Client {
      * </ul>
      *
      * @param remoteFolder - existing remote folder.
+     * @param extension
      * @param localFolderPath
      * @param prevImportedFiles
      * @param changedSince
      * @return Map of downloaded file names and its' timestamps
      * @throws FtpException
      */
-    public Map<String, Date> downloadAllNewCsvFiles(String remoteFolder, String localFolderPath, Map<String, Date> prevImportedFiles, Date changedSince) throws FtpException {
+    public Map<String, Date> downloadAllNewCsvFiles(String remoteFolder, String extension, String localFolderPath, Map<String, Date> prevImportedFiles, Date changedSince) throws FtpException {
         //set ftp file filter accordingly
         FTPFileFilter filter;
         /*
@@ -109,9 +110,9 @@ public class Client {
                 filter=FtpFilters.FILES_CHANGED_SINCE(prevImportedFiles);
             }*/
         if (changedSince != null) {
-            filter = FtpFilters.CSVFILES_CHANGED_SINCE(changedSince);
+            filter = FtpFilters.FILES_CHANGED_SINCE(changedSince, extension);
         } else {
-            filter = FtpFilters.JUSTCSVFILES;
+            filter = FtpFilters.JUSTFILES_WITH_EXT(extension);
         }
         //get list of files to download
 
@@ -159,20 +160,21 @@ public class Client {
      * Download all files in specified folder with prefix
      *
      * @param remoteFolder
+     * @param extension
      * @param localFolderPath
      * @param prefix
      * @param changedSince
      * @return
      * @throws FtpException
      */
-    public Map<String, Date> downloadAllNewCsvFilesByPrefix(String remoteFolder, String localFolderPath, String prefix, Date changedSince) throws FtpException {
+    public Map<String, Date> downloadAllNewCsvFilesByPrefix(String remoteFolder, String extension, String localFolderPath, String prefix, Date changedSince) throws FtpException {
         //set ftp file filter accordingly
         FTPFileFilter filter;
 
         if (changedSince != null) {
-            filter = FtpFilters.CSVFILES_WITH_PREFIX_CHANGED_SINCE(changedSince, prefix);
+            filter = FtpFilters.FILES_WITH_PREFIX_CHANGED_SINCE(changedSince, prefix, extension);
         } else {
-            filter = FtpFilters.JUSTCSVFILES_WITH_PREFIX(prefix);
+            filter = FtpFilters.JUSTFILES_WITH_PREFIX(prefix, extension);
         }
 
         return downloadAllFilesByFilter(remoteFolder, localFolderPath, filter);

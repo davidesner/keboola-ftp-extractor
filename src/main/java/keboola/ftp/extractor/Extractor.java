@@ -121,15 +121,13 @@ public class Extractor {
                 if (mapping.isFolder()) {
                     //download all csv files in case of whole folder
                     if (mapping.getPrefix() != null) {//in case of files by prefix
-                        retrievedFiles = ftpClient.downloadAllNewCsvFilesByPrefix(mapping.getFtpPath(), outTablesPath, mapping.getPrefix(), lastRun);
+                        retrievedFiles = ftpClient.downloadAllNewCsvFilesByPrefix(mapping.getFtpPath(), mapping.getExtension(), outTablesPath, mapping.getPrefix(), lastRun);
                     } else {//all files in folder
-                        retrievedFiles = ftpClient.downloadAllNewCsvFiles(mapping.getFtpPath(), outTablesPath, null, lastRun);
+                        retrievedFiles = ftpClient.downloadAllNewCsvFiles(mapping.getFtpPath(), mapping.getExtension(), outTablesPath, null, lastRun);
                     }
                 } else {
                     File f = new File(mapping.getFtpPath());
-
                     retrievedFiles = ftpClient.downloadFile(f.getParent(), f.getName(), outTablesPath);
-
                 }
 
                 count += retrievedFiles.size();

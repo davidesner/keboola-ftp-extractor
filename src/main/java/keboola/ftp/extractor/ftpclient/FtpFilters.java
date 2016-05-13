@@ -27,21 +27,30 @@ public class FtpFilters {
         }
 
     };
-    /**
-     * Accepts all (non-null) FTPFile csv files entries.
-     */
-    public static final FTPFileFilter JUSTCSVFILES = new FTPFileFilter() {
-        @Override
-        public boolean accept(FTPFile file) {
-            return file != null && !file.isDirectory() && isCSV(file.getName());
-        }
-
-    };
 
     /**
      * Accepts all (non-null) FTPFile csv files entries.
+     *
+     * @param extension
+     * @return FTPFileFilter
      */
-    public static final FTPFileFilter JUSTCSVFILES_WITH_PREFIX(final String prefix) {
+    public static final FTPFileFilter JUSTFILES_WITH_EXT(final String extension) {
+        return new FTPFileFilter() {
+            @Override
+            public boolean accept(FTPFile file) {
+                return file != null && !file.isDirectory() && hasExtension(file.getName(), extension);
+            }
+        };
+    }
+
+    /**
+     * Accepts all (non-null) FTPFile csv files entries.
+     *
+     * @param prefix
+     * @param extension
+     * @return
+     */
+    public static final FTPFileFilter JUSTFILES_WITH_PREFIX(final String prefix, final String extension) {
         return new FTPFileFilter() {
             @Override
             public boolean accept(FTPFile file) {
@@ -50,13 +59,13 @@ public class FtpFilters {
                 }
                 String normName = file.getName();//.toLowerCase();
 
-                return !file.isDirectory() && isCSV(file.getName()) && normName.startsWith(prefix);
+                return !file.isDirectory() && hasExtension(file.getName(), extension) && normName.startsWith(prefix);
             }
 
         };
     }
 
-    public static final FTPFileFilter CSVFILES_WITH_PREFIX_CHANGED_SINCE(final Date changedSince, final String prefix) {
+    public static final FTPFileFilter FILES_WITH_PREFIX_CHANGED_SINCE(final Date changedSince, final String prefix, final String extension) {
         return new FTPFileFilter() {
             @Override
             public boolean accept(FTPFile file) {
@@ -66,7 +75,7 @@ public class FtpFilters {
                 String normName = file.getName();//.toLowerCase();
                 Calendar since = new GregorianCalendar();
                 since.setTime(changedSince);
-                return !file.isDirectory() && file.getTimestamp().after(since) && isCSV(file.getName()) && normName.startsWith(prefix);
+                return !file.isDirectory() && file.getTimestamp().after(since) && hasExtension(file.getName(), extension) && normName.startsWith(prefix);
             }
 
         };
@@ -76,15 +85,16 @@ public class FtpFilters {
      * Accepts all (non-null) FTPFile files entries since specified date.
      *
      * @param changedSince
+     * @param extension
      * @return
      */
-    public static final FTPFileFilter CSVFILES_CHANGED_SINCE(final Date changedSince) {
+    public static final FTPFileFilter FILES_CHANGED_SINCE(final Date changedSince, final String extension) {
         return new FTPFileFilter() {
             @Override
             public boolean accept(FTPFile file) {
                 Calendar since = new GregorianCalendar();
                 since.setTime(changedSince);
-                return file != null && !file.isDirectory() && file.getTimestamp().after(since) && isCSV(file.getName());
+                return file != null && !file.isDirectory() && file.getTimestamp().after(since) && hasExtension(file.getName(), extension);
             }
 
         };
@@ -141,5 +151,10 @@ public class FtpFilters {
     private static boolean isCSV(String filename) {
         String ex = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
         return ex.toLowerCase().equals("csv");
+    }
+
+    private static boolean hasExtension(String filename, String extension) {
+        String ex = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
+        return ex.toLowerCase().equals(extension);
     }
 }
