@@ -88,7 +88,17 @@
 
                     }
 
-                }
+                },
+                "required": [
+                    "ftpPath",
+                    "sapiPath",
+                    "extension",
+                    "isFolder",
+                    "incremental",
+                    "pkey",
+                    "delimiter",
+                    "enclosure"
+                ]
             }
         }
     },
