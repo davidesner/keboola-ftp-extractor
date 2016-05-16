@@ -1,0 +1,95 @@
+{
+    "title": "FTP extractor configuration",
+    "type": "object",
+    "properties": {
+        "ftpUrl": {
+            "type": "string",
+            "description": "FTP repository url"
+        },
+        "user": {
+            "type": "string",
+            "description": "FTP user name"
+        },
+        "#pass": {
+            "type": "string",
+            "description": "FTP password"
+        },
+        "mappings": {
+            "type": "array",
+            "title": "mappings",
+            "description": "list of files (folders) to download",
+            "items": {
+                "type": "object",
+                "title": "mapping",
+                "properties": {
+                    "ftpPath": {
+                        "type": "string",
+                        "title": "ftpPath",
+                        "description": "Remote Path (by default a remote folder)."
+
+                    },
+                    "sapiPath": {
+                        "type": "string",
+                        "title": "sapiPath",
+                        "description": "Sapi path where the result will be uploaded (e.g. out.c-main.mytable)."
+
+                    },
+                    "extension": {
+                        "type": "string",
+                        "title": "extension",
+                        "description": "Custom extension of files to retrieve. i.e. txt.",
+                        "default": "csv"
+
+                    },
+                    "prefix": {
+                        "type": "string",
+                        "title": "prefix",
+                        "description": "Download files starting with specified prefix. (Optional)"
+
+                    },
+                    "isFolder": {
+                        "type": "number",
+                        "description": "Indicator whether the specified path is a single file or the whole folder",
+                        "enum": [
+                            0,
+                            1
+                        ],
+                        "default": 1
+                    },
+                    "incremental": {
+                        "title": "incremental",
+                        "type": "number",
+                        "enum": [
+                            0,
+                            1
+                        ],
+                        "default": 1
+                    },
+                    "pkey": {
+                        "type": "array",
+                        "description": "Names of primary key columns.",
+                        "items": {
+                            "type": "string"
+                        },
+                        "uniqueItems": true
+                    },
+                    "delimiter": {
+                        "type": "string",
+                        "title": "delimiter",
+                        "description": "Delimiter used in remote csv files",
+                        "default": ","
+
+                    },
+                    "enclosure": {
+                        "type": "string",
+                        "title": "enclosure",
+                        "description": "Enclosure used in remote csv files",
+                        "default": "\""
+
+                    }
+
+                }
+            }
+        }
+    }
+}
