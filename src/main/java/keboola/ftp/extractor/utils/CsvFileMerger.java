@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.channels.FileChannel;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 public class CsvFileMerger {
 
     public static void mergeFiles(Collection<String> fileNames, String srcFolderPath, String mergedPath, String mergedName, char separator, char enclosure) throws MergeException {
-        BufferedReader reader = null;
+
         String headerLine = "";
 
         //create output file
@@ -49,6 +49,7 @@ public class CsvFileMerger {
             throw ex;
         }
 
+        char[] headerChars;
         for (String fName : fileNames) {
             FileInputStream fis = null;
             String fPath = srcFolderPath + File.separator + fName;
@@ -56,10 +57,12 @@ public class CsvFileMerger {
                 File file = new File(fPath);
                 //retrieve file header
                 fis = new FileInputStream(file);
-                reader = new BufferedReader(new InputStreamReader(fis));
-                headerLine = reader.readLine();
+//                reader = new BufferedReader(new InputStreamReader(fis));
 
-                if (headerLine == null) {
+                headerChars = readLineWithNL(fis);
+                headerLine = new String(headerChars);
+
+                if (headerChars == null) {
                     continue;
                 }
                 //write header from first file and retrieve filechannel 
@@ -67,7 +70,7 @@ public class CsvFileMerger {
                     fout = new FileOutputStream(outFile);
                     BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fout));
                     bw.write(headerLine);
-                    bw.newLine();
+//                    bw.newLine();
                     bw.flush();
                     out = fout.getChannel();
 
@@ -76,7 +79,8 @@ public class CsvFileMerger {
                 FileChannel in = fis.getChannel();
                 long pos = 0;
                 //set position according to header (first run is set by writer)
-                pos = headerLine.length() + 2;//+2 because of NL character
+
+                pos = in.position() - 1;//+2 because of NL character
 
                 for (long p = pos, l = in.size(); p < l;) {
                     p += in.transferTo(p, l - p, out);
@@ -84,14 +88,14 @@ public class CsvFileMerger {
 
                 i++;
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(CsvFileMerger.class.getName()).log(Level.SEVERE, null, ex);
+
                 throw new MergeException("File not found. " + ex.getMessage());
             } catch (IOException ex) {
-                Logger.getLogger(CsvFileMerger.class.getName()).log(Level.SEVERE, null, ex);
+
                 throw new MergeException("Error merging files. " + ex.getMessage());
             } finally {
                 try {
-                    reader.close();
+//                    reader.close();
                     fis.close();
 
                 } catch (IOException ex) {
@@ -176,4 +180,47 @@ public class CsvFileMerger {
         }
         return true;
     }
+
+    private static final boolean isNL(int character) {
+        if ((character == -1)) {
+            return false;
+        } else {
+            return ((((char) character == '\n')
+                    || ((char) character == '\r')));
+        }
+    }
+
+    private static char[] readLineWithNL(FileInputStream in) {
+        try {
+            int hLen = 0;
+
+            ArrayList<Character> chars = new ArrayList();
+            int ch = in.read();
+            chars.add((char) ch);
+            while (!isNL(ch)) {
+                ch = in.read();
+                chars.add((char) ch);
+            }
+            boolean isNl = true;
+            while (isNl) {
+                ch = in.read();
+                if (isNL(ch)) {
+                    chars.add((char) ch);
+                    isNl = true;
+                } else {
+                    isNl = false;
+                }
+                hLen++;
+            }
+            char[] charArray = new char[chars.size()];
+            for (int i = 0; i < chars.size(); i++) {
+                charArray[i] = chars.get(i);
+            }
+            return charArray;//in.getChannel().position() - 1;
+        } catch (IOException ex) {
+            Logger.getLogger(CsvFileMerger.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
 }
