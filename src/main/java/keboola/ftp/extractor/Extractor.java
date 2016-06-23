@@ -13,14 +13,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import keboola.ftp.extractor.config.FtpMapping;
 import keboola.ftp.extractor.config.KBCConfig;
-import keboola.ftp.extractor.config.YamlConfigParser;
+import keboola.ftp.extractor.config.JsonConfigParser;
 import keboola.ftp.extractor.config.tableconfig.ManifestBuilder;
 import keboola.ftp.extractor.config.tableconfig.ManifestFile;
 import keboola.ftp.extractor.ftpclient.Client;
 import keboola.ftp.extractor.ftpclient.FtpException;
 import keboola.ftp.extractor.state.VisitedFolder;
 import keboola.ftp.extractor.state.VisitedFoldersList;
-import keboola.ftp.extractor.state.YamlStateWriter;
+import keboola.ftp.extractor.state.JsonStateWriter;
 import keboola.ftp.extractor.utils.CsvFileMerger;
 import keboola.ftp.extractor.utils.CsvUtils;
 import keboola.ftp.extractor.utils.FileHandler;
@@ -45,16 +45,15 @@ public class Extractor {
 
         KBCConfig config = null;
 
-        File confFile = new File(args[0] + File.separator + "config.yml");
+        File confFile = new File(args[0] + File.separator + "config.json");
         if (!confFile.exists()) {
-            System.out.println("config.yml does not exist!");
-            System.err.println("config.yml does not exist!");
+            System.err.println("config.json does not exist!");
             System.exit(1);
         }
         //Parse config file
         try {
             if (confFile.exists() && !confFile.isDirectory()) {
-                config = YamlConfigParser.parseFile(confFile);
+                config = JsonConfigParser.parseFile(confFile);
             }
         } catch (Exception ex) {
             System.out.println("Failed to parse config file");
@@ -68,11 +67,11 @@ public class Extractor {
             System.exit(1);
         }
         //retrieve stateFile
-        File stateFile = new File(dataPath + File.separator + "in" + File.separator + "state.yml");
+        File stateFile = new File(dataPath + File.separator + "in" + File.separator + "state.json");
         VisitedFoldersList visitedFolders = null;
         if (stateFile.exists()) {
             try {
-                visitedFolders = (VisitedFoldersList) YamlConfigParser.parseFile(stateFile, VisitedFoldersList.class);
+                visitedFolders = (VisitedFoldersList) JsonConfigParser.parseFile(stateFile, VisitedFoldersList.class);
             } catch (IOException ex) {
                 Logger.getLogger(Extractor.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -175,7 +174,7 @@ public class Extractor {
 
         /*Write state file*/
         try {
-            YamlStateWriter.writeStateFile(dataPath + File.separator + "out" + File.separator + "state.yml", visitedFoldersCurrent);
+            JsonStateWriter.writeStateFile(dataPath + File.separator + "out" + File.separator + "state.json", visitedFoldersCurrent);
         } catch (IOException ex) {
             Logger.getLogger(Extractor.class.getName()).log(Level.SEVERE, null, ex);
         }

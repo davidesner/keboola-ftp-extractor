@@ -1,129 +1,130 @@
 {
-  "title": "FTP extractor configuration",
-  "type": "object",
-  "properties": {
-    "ftpUrl": {
-      "type": "string",
-      "title": "FTP host URL"
-    },
-    "user": {
-      "type": "string",
-      "title": "FTP user name"
-    },
-    "#pass": {
-      "type": "string",
-      "title": "FTP password"
-    },
-    "mappings": {
-      "type": "array",
-      "title": "Files/Folders to download",
-      "items": {
-        "type": "object",
-        "title": "Mapping",
-        "properties": {
-          "ftpPath": {
+    "title": "FTP extractor configuration",
+    "type": "object",
+    "properties": {
+        "ftpUrl": {
             "type": "string",
-            "title": "Remote Path",
-            "propertyOrder": 1000,
-            "description": "e.g. /myfolder/mysubfolder"
-          },
-          "isFolder": {
-            "type": "number",
-            "propertyOrder": 2000,
-            "title": "Download folder or file",
-            "description": "The specified path is a single file or a whole folder",
-            "enum": [
-              0,
-              1
-            ],
-            "default": 1,
-            "options": {
-              "enum_titles": [
-                "Folder",
-                "Single file"
-              ]
-            }
-          },          
-          "sapiPath": {
-            "propertyOrder": 3000,
-            "type": "string",
-            "title": "Table name",
-            "description": "Storage bucket and table where the result will be uploaded (e.g. out.c-main.mytable)."
-          },
-          "extension": {
-            "propertyOrder": 4000,
-            "type": "string",
-            "title": "Extension",
-            "description": "Extension of files to retrieve (e.g. txt, csv).",
-            "default": "csv"
-          },
-          "prefix": {
-            "propertyOrder": 5000,
-            "type": "string",
-            "title": "Filename prefix (optional)",
-            "description": "Download only files starting with specified prefix."
-          },
-          "incremental": {
-            "propertyOrder": 6000,
-            "title": "Storage upload mode",
-            "description": "Incremental upload will append data to existing tables. Full upload will replace the contents of target table.",
-            "type": "number",
-            "enum": [
-              0,
-              1
-            ],
-            "default": 1,
-            "options": {
-              "enum_titles": [
-                "Full",
-                "Incremental"
-              ]
-            }
-
-          },
-          "pkey": {
-            "propertyOrder": 7000,
-            "title": "Primary Key",
-            "type": "array",
-            "description": "Names of primary key columns.",
-            "items": {
-              "type": "string",
-              "title": "Column name"
-            },
-            "uniqueItems": true
-          },
-          "delimiter": {
-            "propertyOrder": 8000,
-            "type": "string",
-            "title": "CSV Delimiter",
-            "description": "Delimiter used in remote CSV files",
-            "default": ","
-          },
-          "enclosure": {
-            "propertyOrder": 9000,
-            "type": "string",
-            "title": "CSV Enclosure",
-            "description": "Enclosure for values used in remote CSV files",
-            "default": "\""
-          }
+            "title": "FTP host URL"
         },
-        "required": [
-          "ftpPath",
-          "sapiPath",
-          "extension",
-          "isFolder",
-          "incremental",
-          "pkey",
-          "delimiter",
-          "enclosure"
-        ]
-      }
-    }
-  },
-  "required": [
-    "ftpUrl",
-    "user",
-    "#pass",
-    "mappings"
-  ]
+        "user": {
+            "type": "string",
+            "title": "FTP user name"
+        },
+        "#pass": {
+            "type": "string",
+            "title": "FTP password"
+        },
+        "mappings": {
+            "type": "array",
+            "title": "Files/Folders to download",
+            "items": {
+                "type": "object",
+                "title": "Mapping",
+                "properties": {
+                    "ftpPath": {
+                        "type": "string",
+                        "title": "Remote Path",
+                        "propertyOrder": 1000,
+                        "description": "e.g. /myfolder/mysubfolder"
+                    },
+                    "isFolder": {
+                        "type": "number",
+                        "propertyOrder": 2000,
+                        "title": "Download folder or file",
+                        "description": "The specified path is a single file or a whole folder",
+                        "enum": [
+                            0,
+                            1
+                        ],
+                        "default": 1,
+                        "options": {
+                            "enum_titles": [
+                                "Folder",
+                                "Single file"
+                            ]
+                        }
+                    },
+                    "sapiPath": {
+                        "propertyOrder": 3000,
+                        "type": "string",
+                        "title": "Table name",
+                        "description": "Storage bucket and table where the result will be uploaded (e.g. out.c-main.mytable)."
+                    },
+                    "extension": {
+                        "propertyOrder": 4000,
+                        "type": "string",
+                        "title": "Extension",
+                        "description": "Extension of files to retrieve (e.g. txt, csv).",
+                        "default": "csv"
+                    },
+                    "prefix": {
+                        "propertyOrder": 5000,
+                        "type": "string",
+                        "title": "Filename prefix (optional)",
+                        "description": "Download only files starting with specified prefix."
+                    },
+                    "incremental": {
+                        "propertyOrder": 6000,
+                        "title": "Storage upload mode",
+                        "description": "Incremental upload will append data to existing tables. Full upload will replace the contents of target table.",
+                        "type": "number",
+                        "enum": [
+                            0,
+                            1
+                        ],
+                        "default": 1,
+                        "options": {
+                            "enum_titles": [
+                                "Full",
+                                "Incremental"
+                            ]
+                        }
+
+                    },
+                    "pkey": {
+                        "propertyOrder": 7000,
+                        "title": "Primary Key",
+                        "type": "array",
+                        "description": "Names of primary key columns.",
+                        "items": {
+                            "type": "string",
+                            "title": "Column name"
+                        },
+                        "default": null,
+                        "uniqueItems": true
+                    },
+                    "delimiter": {
+                        "propertyOrder": 8000,
+                        "type": "string",
+                        "title": "CSV Delimiter",
+                        "description": "Delimiter used in remote CSV files",
+                        "default": ","
+                    },
+                    "enclosure": {
+                        "propertyOrder": 9000,
+                        "type": "string",
+                        "title": "CSV Enclosure",
+                        "description": "Enclosure for values used in remote CSV files",
+                        "default": "\""
+                    }
+                },
+                "required": [
+                    "ftpPath",
+                    "sapiPath",
+                    "extension",
+                    "isFolder",
+                    "incremental",
+                    "pkey",
+                    "delimiter",
+                    "enclosure"
+                ]
+            }
+        }
+    },
+    "required": [
+        "ftpUrl",
+        "user",
+        "#pass",
+        "mappings"
+    ]
 }
