@@ -29,7 +29,7 @@ Configuration requires in default 3 basic credential parameters (`ftpUrl`, `user
 		remote folder) 
     - **sapiPath** – (REQ) Sapi path where the result
 		will be uploaded (e.g. out.c-main.mytable) 
-    - **isFolder** – (DEFAULT 0) indicator whether to
+    - **isFolder** – (DEFAULT 1) indicator whether to
 		download a single file or the whole folder 
     - **extension** - (DEFAULT `csv`) optional parameter specifying custom extension of files to retrieve. i.e. `txt`. If not specified all files with `csv` extension will be downloaded by default.
     - **incremental** – (DEFAULT 1) specifies whether
