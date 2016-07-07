@@ -2,6 +2,7 @@
  */
 package keboola.ftp.extractor.state;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
 import java.util.Map;
@@ -19,10 +20,17 @@ public class VisitedFolder {
         this.lastRun = lastRun;
     }
 
+    public VisitedFolder(String folderPath, Date lastRun) {
+        this.folderPath = folderPath;
+
+        this.lastRun = lastRun;
+    }
+
     @JsonProperty("folderPath")
     private String folderPath;
 
-    @JsonProperty("fileMap")
+    //@JsonProperty("fileMap")
+    @JsonIgnore
     private Map<String, Date> fileMap;
 
     @JsonProperty("lastRun")

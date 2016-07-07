@@ -91,7 +91,7 @@ public class Extractor {
 
         List<VisitedFolder> visitedFoldersCurrent = new ArrayList();
         Map<String, Date> retrievedFiles = null;
-        Map<String, Date> prevImpFiles = null;
+        //Map<String, Date> prevImpFiles = null;
         Date lastRun = null;
         Date currDate;
         /*Download all files and generate manifests*/
@@ -107,7 +107,7 @@ public class Extractor {
                         if (visitedFolders.getVisitedFolders() != null) {
                             VisitedFolder vf = visitedFolders.getFolderByPath(mapping.getFtpPath());
                             if (vf != null) {
-                                prevImpFiles = vf.getFileMap();
+                                //prevImpFiles = vf.getFileMap();
                                 lastRun = vf.getLastRun();
                             }
                         }
