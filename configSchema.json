@@ -14,6 +14,13 @@
             "type": "string",
             "title": "FTP password"
         },
+        "protocol": {
+            "type": "string",
+            "title": "FTP protocol",
+            "enum": ["FTP", "SFTP"],
+            "default": "FTP"
+
+        },
         "mappings": {
             "type": "array",
             "title": "Files/Folders to download",
@@ -125,6 +132,7 @@
         "ftpUrl",
         "user",
         "#pass",
+        "protocol",
         "mappings"
     ]
 }
