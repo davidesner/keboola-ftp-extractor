@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -14,16 +13,17 @@ import java.util.logging.Logger;
 import keboola.ftp.extractor.config.FtpMapping;
 import keboola.ftp.extractor.config.KBCConfig;
 import keboola.ftp.extractor.config.JsonConfigParser;
+import keboola.ftp.extractor.config.KBCParameters;
 import keboola.ftp.extractor.config.tableconfig.ManifestBuilder;
 import keboola.ftp.extractor.config.tableconfig.ManifestFile;
-import keboola.ftp.extractor.ftpclient.Client;
+import keboola.ftp.extractor.ftpclient.FTPClient;
+import keboola.ftp.extractor.ftpclient.FTPClientBuilder;
 import keboola.ftp.extractor.ftpclient.FtpException;
+import keboola.ftp.extractor.ftpclient.IFTPClient;
 import keboola.ftp.extractor.state.VisitedFolder;
 import keboola.ftp.extractor.state.VisitedFoldersList;
 import keboola.ftp.extractor.state.JsonStateWriter;
 import keboola.ftp.extractor.utils.CsvFileMerger;
-import keboola.ftp.extractor.utils.CsvUtils;
-import keboola.ftp.extractor.utils.FileHandler;
 import keboola.ftp.extractor.utils.MergeException;
 
 /**
@@ -80,9 +80,19 @@ public class Extractor {
         }
 
         //get user mappings
-        List<FtpMapping> mappings = config.getParams().getMappings();
+        KBCParameters confParams = config.getParams();
+        List<FtpMapping> mappings = confParams.getMappings();
+        IFTPClient ftpClient = null;
+        try {
+            ftpClient = FTPClientBuilder.create(confParams.getProtocol(), confParams.getFtpUrl())
+                    .setUser(confParams.getUser())
+                    .setPass(confParams.getPass()).build();
+        } catch (FtpException ex) {
+            System.err.println("Failed to create FTP client. " + ex.getMessage());
+            //ex.printStackTrace();
+            System.exit(ex.getSeverity());
+        }
 
-        Client ftpClient = new Client(config.getParams().getUser(), config.getParams().getPass(), config.getParams().getFtpUrl());
         try {
             ftpClient.connect();
         } catch (IOException ex) {
@@ -106,7 +116,7 @@ public class Extractor {
                     try {
                         if (visitedFolders.getVisitedFolders() != null) {
                             VisitedFolder vf = visitedFolders.getFolderByPath(mapping.getFtpPath());
-                            if (vf != null) {
+                            if (vf != null && mapping.equals(vf.getLastMapping())) {
                                 //prevImpFiles = vf.getFileMap();
                                 lastRun = vf.getLastRun();
                             }
@@ -133,7 +143,7 @@ public class Extractor {
 
                 //create historical state record for current folder
                 currDate = new Date();
-                VisitedFolder f = new VisitedFolder(mapping.getFtpPath(), retrievedFiles, currDate);
+                VisitedFolder f = new VisitedFolder(mapping.getFtpPath(), retrievedFiles, currDate, mapping);
                 visitedFoldersCurrent.add(f);
 
                 if (count == 0) {

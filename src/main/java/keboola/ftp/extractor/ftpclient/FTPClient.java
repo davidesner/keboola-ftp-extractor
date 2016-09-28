@@ -1,5 +1,6 @@
 package keboola.ftp.extractor.ftpclient;
 
+import keboola.ftp.extractor.ftpclient.filters.FtpFilters;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,23 +9,22 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
 import org.apache.commons.net.ftp.FTPReply;
 
 /**
- * FTP Client for handling FTP connections
+ * FTP FTPClient for handling FTP connections
  *
  * @author David Esner <esnerda at gmail.com>
  * @created 2015
  */
-public class Client {
+public class FTPClient implements IFTPClient {
 
     private String userName;
     private String pass;
     private String url;
-    private FTPClient ftpClient;
+    private org.apache.commons.net.ftp.FTPClient ftpClient;
 
     /**
      *
@@ -32,11 +32,11 @@ public class Client {
      * @param pass
      * @param url
      */
-    public Client(String userName, String pass, String url) {
+    public FTPClient(String userName, String pass, String url) {
         this.userName = userName;
         this.pass = pass;
         this.url = url;
-        ftpClient = new FTPClient();
+        ftpClient = new org.apache.commons.net.ftp.FTPClient();
         //set buffer size
         this.ftpClient.setBufferSize(1024 * 1024);
     }

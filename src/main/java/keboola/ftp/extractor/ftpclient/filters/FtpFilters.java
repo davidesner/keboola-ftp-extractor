@@ -1,6 +1,6 @@
 /*
  */
-package keboola.ftp.extractor.ftpclient;
+package keboola.ftp.extractor.ftpclient.filters;
 
 import java.util.Calendar;
 import java.util.Date;

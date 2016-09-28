@@ -3,6 +3,7 @@
 package keboola.ftp.extractor.config;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import keboola.ftp.extractor.ftpclient.FTPClientBuilder;
 
 /**
  *
@@ -32,12 +34,17 @@ public class KBCParameters {
     private String pass;
     @JsonProperty("mappings")
     private List<FtpMapping> mappings;
+    @JsonProperty("protocol")
+    private String protocol;
     //end date of fetched interval in format: 05-10-2015 21:00
     @JsonProperty("dateTo")
     private String dateTo;
     //start date of fetched interval in format: 05-10-2015 21:00
     @JsonProperty("dateFrom")
     private String dateFrom;
+
+    @JsonIgnore
+    private FTPClientBuilder.Protocol ftpProtocol;
 
     public KBCParameters() {
         parametersMap = new HashMap();
@@ -46,7 +53,7 @@ public class KBCParameters {
 
     @JsonCreator
     public KBCParameters(@JsonProperty("ftpUrl") String ftpUrl, @JsonProperty("user") String user, @JsonProperty("#pass") String pass,
-            @JsonProperty("dateFrom") int daysInterval, @JsonProperty("dateTo") String dateTo,
+            @JsonProperty("protocol") String protocol, @JsonProperty("dateFrom") int daysInterval, @JsonProperty("dateTo") String dateTo,
             @JsonProperty("mappings") ArrayList<FtpMapping> mappings) throws ParseException {
         parametersMap = new HashMap();
         this.ftpUrl = ftpUrl;
@@ -54,6 +61,21 @@ public class KBCParameters {
         this.pass = pass;
         this.mappings = mappings;
         this.dateTo = dateTo;
+        this.protocol = protocol;
+        if (protocol != null) {
+            if (protocol.equals(FTPClientBuilder.Protocol.FTP.name())) {
+                this.ftpProtocol = FTPClientBuilder.Protocol.FTP;
+            } else if (protocol.equals(FTPClientBuilder.Protocol.SFTP.name())) {
+                this.ftpProtocol = FTPClientBuilder.Protocol.SFTP;
+            } else if (protocol.equals(FTPClientBuilder.Protocol.FTPS.name())) {
+                this.ftpProtocol = FTPClientBuilder.Protocol.FTPS;
+            } else {
+                this.ftpProtocol = FTPClientBuilder.Protocol.FTP;
+            }
+        } else {
+            this.ftpProtocol = FTPClientBuilder.Protocol.FTP;
+            this.protocol = FTPClientBuilder.Protocol.FTP.name();
+        }
         if (dateTo != null) {
             setDate_to(dateTo);
         }
@@ -134,6 +156,18 @@ public class KBCParameters {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    public FTPClientBuilder.Protocol getFtpProtocol() {
+        return ftpProtocol;
     }
 
     public String getFtpUrl() {

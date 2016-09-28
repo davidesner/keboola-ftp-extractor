@@ -3,6 +3,7 @@
 package keboola.ftp.extractor.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Arrays;
 
 /**
  *
@@ -143,4 +144,29 @@ public class FtpMapping {
         return prefix;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof FtpMapping)) {
+            return false;
+        }
+        FtpMapping f = (FtpMapping) obj;
+        return this.ftpPath.equals(f.ftpPath) && this.prefix.equals(f.prefix)
+                && this.extension.endsWith(f.extension) && this.isFolder.equals(f.isFolder)
+                && this.sapiPath.equals(f.sapiPath);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + (this.ftpPath != null ? this.ftpPath.hashCode() : 0);
+        hash = 79 * hash + (this.sapiPath != null ? this.sapiPath.hashCode() : 0);
+        hash = 79 * hash + (this.isFolder != null ? this.isFolder.hashCode() : 0);
+        hash = 79 * hash + (this.incremental != null ? this.incremental.hashCode() : 0);
+        hash = 79 * hash + Arrays.deepHashCode(this.pkey);
+        hash = 79 * hash + (this.prefix != null ? this.prefix.hashCode() : 0);
+        hash = 79 * hash + (this.delimiter != null ? this.delimiter.hashCode() : 0);
+        hash = 79 * hash + (this.enclosure != null ? this.enclosure.hashCode() : 0);
+        hash = 79 * hash + (this.extension != null ? this.extension.hashCode() : 0);
+        return hash;
+    }
 }
