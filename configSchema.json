@@ -17,9 +17,13 @@
         "protocol": {
             "type": "string",
             "title": "FTP protocol",
-            "enum": ["FTP", "SFTP"],
+            "enum": ["FTP", "FTPS", "SFTP"],
             "default": "FTP"
 
+        },
+        "timezone": {
+            "type": "string",
+            "title": "FTP host timezone"
         },
         "mappings": {
             "type": "array",
@@ -133,6 +137,7 @@
         "user",
         "#pass",
         "protocol",
+        "timezone",
         "mappings"
     ]
 }

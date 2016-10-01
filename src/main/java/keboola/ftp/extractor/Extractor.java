@@ -5,9 +5,12 @@ package keboola.ftp.extractor;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import keboola.ftp.extractor.config.FtpMapping;
@@ -16,7 +19,6 @@ import keboola.ftp.extractor.config.JsonConfigParser;
 import keboola.ftp.extractor.config.KBCParameters;
 import keboola.ftp.extractor.config.tableconfig.ManifestBuilder;
 import keboola.ftp.extractor.config.tableconfig.ManifestFile;
-import keboola.ftp.extractor.ftpclient.FTPClient;
 import keboola.ftp.extractor.ftpclient.FTPClientBuilder;
 import keboola.ftp.extractor.ftpclient.FtpException;
 import keboola.ftp.extractor.ftpclient.IFTPClient;
@@ -86,7 +88,8 @@ public class Extractor {
         try {
             ftpClient = FTPClientBuilder.create(confParams.getProtocol(), confParams.getFtpUrl())
                     .setUser(confParams.getUser())
-                    .setPass(confParams.getPass()).build();
+                    .setPass(confParams.getPass())
+                    .setHostTz(TimeZone.getTimeZone(confParams.getTimezone())).build();
         } catch (FtpException ex) {
             System.err.println("Failed to create FTP client. " + ex.getMessage());
             //ex.printStackTrace();

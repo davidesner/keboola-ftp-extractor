@@ -12,4 +12,5 @@ import com.jcraft.jsch.ChannelSftp.LsEntry;
 public interface SFTPfilter {
 
     public boolean accept(LsEntry file);
+
 }

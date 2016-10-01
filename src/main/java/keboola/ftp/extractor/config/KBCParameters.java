@@ -7,11 +7,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
 import keboola.ftp.extractor.ftpclient.FTPClientBuilder;
 
 /**
@@ -21,7 +26,7 @@ import keboola.ftp.extractor.ftpclient.FTPClientBuilder;
  */
 public class KBCParameters {
 
-    private final static String[] REQUIRED_FIELDS = {"user", "pass", "mappings", "ftpUrl"};
+    private final static String[] REQUIRED_FIELDS = {"user", "pass", "protocol", "timezone", "mappings", "ftpUrl"};
     private final Map<String, Object> parametersMap;
 
     private Date date_from;
@@ -36,6 +41,8 @@ public class KBCParameters {
     private List<FtpMapping> mappings;
     @JsonProperty("protocol")
     private String protocol;
+    @JsonProperty("timezone")
+    private String timezone;
     //end date of fetched interval in format: 05-10-2015 21:00
     @JsonProperty("dateTo")
     private String dateTo;
@@ -53,7 +60,8 @@ public class KBCParameters {
 
     @JsonCreator
     public KBCParameters(@JsonProperty("ftpUrl") String ftpUrl, @JsonProperty("user") String user, @JsonProperty("#pass") String pass,
-            @JsonProperty("protocol") String protocol, @JsonProperty("dateFrom") int daysInterval, @JsonProperty("dateTo") String dateTo,
+            @JsonProperty("protocol") String protocol, @JsonProperty("timezone") String timezone,
+            @JsonProperty("dateFrom") int daysInterval, @JsonProperty("dateTo") String dateTo,
             @JsonProperty("mappings") ArrayList<FtpMapping> mappings) throws ParseException {
         parametersMap = new HashMap();
         this.ftpUrl = ftpUrl;
@@ -62,6 +70,7 @@ public class KBCParameters {
         this.mappings = mappings;
         this.dateTo = dateTo;
         this.protocol = protocol;
+        this.timezone = timezone;
         if (protocol != null) {
             if (protocol.equals(FTPClientBuilder.Protocol.FTP.name())) {
                 this.ftpProtocol = FTPClientBuilder.Protocol.FTP;
@@ -87,6 +96,8 @@ public class KBCParameters {
         parametersMap.put("ftpUrl", ftpUrl);
         parametersMap.put("user", user);
         parametersMap.put("pass", pass);
+        parametersMap.put("protocol", protocol);
+        parametersMap.put("timezone", timezone);
         parametersMap.put("mappings", new Object());
 
     }
@@ -94,6 +105,13 @@ public class KBCParameters {
     public boolean validateMappings() throws ValidationException {
         for (FtpMapping m : mappings) {
             m.validate();
+        }
+        return this.validate();
+    }
+
+    public boolean validate() throws ValidationException {
+        if (!Arrays.asList(TimeZone.getAvailableIDs()).contains(this.timezone)) {
+            throw new ValidationException("TimeZone " + this.timezone + " is invalid!");
         }
         return true;
     }
@@ -200,6 +218,14 @@ public class KBCParameters {
 
     public void setDateFrom(String dateFrom) {
         this.dateFrom = dateFrom;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
     }
 
 }

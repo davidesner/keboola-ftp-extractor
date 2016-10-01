@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,6 +47,7 @@ public class SFTPClient implements IFTPClient {
      * @param userName
      * @param pass
      * @param url
+     * @param hostTz
      */
     public SFTPClient(String userName, String pass, String url) {
         this.userName = userName;

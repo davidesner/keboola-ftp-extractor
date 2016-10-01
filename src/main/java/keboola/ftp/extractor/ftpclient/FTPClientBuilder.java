@@ -2,6 +2,8 @@
  */
 package keboola.ftp.extractor.ftpclient;
 
+import java.util.TimeZone;
+
 /**
  *
  * author David Esner <esnerda at gmail.com>
@@ -16,6 +18,7 @@ public class FTPClientBuilder {
     private String pass;
     private String url;
     private Protocol protocol;
+    private TimeZone hostTz;
 
     /**
      * Create FTPClientBuilder with specified endpoint url and protocol and
@@ -53,12 +56,17 @@ public class FTPClientBuilder {
         return this;
     }
 
+    public FTPClientBuilder setHostTz(TimeZone hostTz) {
+        this.hostTz = hostTz;
+        return this;
+    }
+
     public IFTPClient build() throws FtpException {
         switch (protocol) {
             case FTP:
-                return new FTPClient(user, pass, url);
+                return new FTPClient(user, pass, url, hostTz);
             case FTPS:
-                return new FTPClient(user, pass, url);
+                return new FTPClient(user, pass, url, hostTz);
             case SFTP:
                 return new SFTPClient(user, pass, url);
             default:

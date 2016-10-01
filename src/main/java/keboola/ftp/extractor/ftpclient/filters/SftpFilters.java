@@ -7,6 +7,7 @@ import com.jcraft.jsch.SftpATTRS;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
  *
@@ -66,7 +67,8 @@ public class SftpFilters {
                 SftpATTRS attrs = file.getAttrs();
                 Calendar since = new GregorianCalendar();
                 since.setTime(changedSince);
-                return !attrs.isDir() && mTimeToCalendar(attrs.getMTime()).after(since) && hasExtension(file.getFilename(), extension) && file.getFilename().startsWith(prefix);
+                Calendar fileChanged = mTimeToCalendar(attrs.getMTime());
+                return !attrs.isDir() && fileChanged.after(since) && hasExtension(file.getFilename(), extension) && file.getFilename().startsWith(prefix);
             }
 
         };
@@ -77,6 +79,7 @@ public class SftpFilters {
      *
      * @param changedSince
      * @param extension
+     * @param hostTz
      * @return
      */
     public static final SFTPfilter FILES_CHANGED_SINCE(final Date changedSince, final String extension) {
@@ -89,7 +92,8 @@ public class SftpFilters {
                 SftpATTRS attrs = file.getAttrs();
                 Calendar since = new GregorianCalendar();
                 since.setTime(changedSince);
-                return !attrs.isDir() && mTimeToCalendar(attrs.getMTime()).after(since) && hasExtension(file.getFilename(), extension);
+                Calendar fileChanged = mTimeToCalendar(attrs.getMTime());
+                return !attrs.isDir() && fileChanged.after(since) && hasExtension(file.getFilename(), extension);
             }
 
         };
@@ -109,5 +113,6 @@ public class SftpFilters {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date(mTime * 1000L));
         return cal;
+
     }
 }

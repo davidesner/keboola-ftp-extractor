@@ -8,6 +8,7 @@ import java.net.SocketException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
@@ -24,6 +25,7 @@ public class FTPClient implements IFTPClient {
     private String userName;
     private String pass;
     private String url;
+    private final TimeZone hostTz;
     private org.apache.commons.net.ftp.FTPClient ftpClient;
 
     /**
@@ -31,11 +33,13 @@ public class FTPClient implements IFTPClient {
      * @param userName
      * @param pass
      * @param url
+     * @param tz Timezone of host machine
      */
-    public FTPClient(String userName, String pass, String url) {
+    public FTPClient(String userName, String pass, String url, TimeZone hostTz) {
         this.userName = userName;
         this.pass = pass;
         this.url = url;
+        this.hostTz = hostTz;
         ftpClient = new org.apache.commons.net.ftp.FTPClient();
         //set buffer size
         this.ftpClient.setBufferSize(1024 * 1024);
@@ -107,7 +111,7 @@ public class FTPClient implements IFTPClient {
                 filter=FtpFilters.FILES_CHANGED_SINCE(prevImportedFiles);
             }*/
         if (changedSince != null) {
-            filter = FtpFilters.FILES_CHANGED_SINCE(changedSince, extension);
+            filter = FtpFilters.FILES_CHANGED_SINCE(changedSince, extension, this.hostTz);
         } else {
             filter = FtpFilters.JUSTFILES_WITH_EXT(extension);
         }
@@ -169,7 +173,7 @@ public class FTPClient implements IFTPClient {
         FTPFileFilter filter;
 
         if (changedSince != null) {
-            filter = FtpFilters.FILES_WITH_PREFIX_CHANGED_SINCE(changedSince, prefix, extension);
+            filter = FtpFilters.FILES_WITH_PREFIX_CHANGED_SINCE(changedSince, prefix, extension, this.hostTz);
         } else {
             filter = FtpFilters.JUSTFILES_WITH_PREFIX(prefix, extension);
         }
