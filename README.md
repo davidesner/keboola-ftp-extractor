@@ -1,5 +1,4 @@
-## FTP extractor for KBC
-
+## FTP(S)/SFTP extractor for KBC
 Extractor component for Keboola Connection allowing to retrieve files from FTP
 server and store them in Storage. 
 
@@ -16,29 +15,30 @@ in several scenarios:
 	upload them to a single storage table. 
 
 Extractor retrieves only files that has changed or has been added since the
-last retrieval. All specified content is downloaded at the first run.
+last retrieval. All specified content is downloaded at the first run. Note that this is based on remote files timestamps and you need to set the parameter *FTP host timezone*  properly in order to make this work for FTP(S) protocol. 
+
+The extractor now supports FTP, FTPS and SFTP protocols.
 
 ### Configuration parameters
-Configuration requires in default 3 basic credential parameters (`ftpUrl`, `user`, `pass`) and 3 mapping parameters (`ftpPath`, `sapiPath`, `pkey`). All other parameters that are not marked as required *(REQ)* are optional and set to default values specified below. `pkey` parameter is required only if the`incremental` is set to 1 (default).
-
-- **ftpUrl** – (REQ) url of FTP host  
-- **user** – (REQ) FTP user name  
-- **#pass** (REQ) FTP password 
+- **FTP host URL** – (REQ) url of FTP host  
+- **FTP user name** – (REQ) FTP user name  
+- **FTP password** – (REQ) FTP password 
+- **FTP protocol** – (REQ) Specifies the FTP protocol (FTP, FTPS and SFTP are currently supported) 
+- **FTP host timezone** – (REQ) timezone of the FTP host machine. This parameter needs to be specified for the extractor to work properly. Due to FTP protocol limitation, the timestamps of remote files reflects the timezone setting of the remote server, however the TZ information is not passed by any way. If this is not set correctly, the extractor may not retrieve all newly uploaded files, since it is based on their timestamps. (NOTE: this parameter does not affect SFTP protocol) 
 - **mappings** - (REQ) list of files (folders) to 	download 
-    - **ftpPath** - (REQ) remote Path (by default a
-		remote folder) 
-    - **sapiPath** – (REQ) Sapi path where the result
-		will be uploaded (e.g. out.c-main.mytable) 
-    - **isFolder** – (DEFAULT 1) indicator whether to
+    - **Remote Path** - (REQ) remote Path (by default a
+		remote folder) e.g. /myfolder/mysubfolder
+    - **Table name** – (REQ) Storage bucket and table where the result will be uploaded (e.g. out.c-main.mytable).
+    - **Download folder or file** – (DEFAULT FOLDER) indicator whether to
 		download a single file or the whole folder 
     - **extension** - (DEFAULT `csv`) optional parameter specifying custom extension of files to retrieve. i.e. `txt`. If not specified all files with `csv` extension will be downloaded by default.
-    - **incremental** – (DEFAULT 1) specifies whether
-		to upload incrementally. If not set to 0, the pkey must be
+    - **Storage upload mode** – (DEFAULT INCREMENTAL) specifies whether
+		to upload incrementally. If set to INCREMENTAL, the pkey must be
 		specified. 		 
-    - **pkey** – (REQ) – array of namees of the primary key columns, required (by default0  if incremental is set to 1 
-    - **prefix** – optional prefix string of files to	download and group into single table 
-    - **delimiter** – (DEFAULT ,) delimiter remote csv file	(default , ) 
-    - **enclosure** – (DEFAULT ") enclosure of remote csv file
+    - **Primary Key** – (REQ) – array of namees of the primary key columns, required (If upload mode is INCREMENTAL)
+    - **Prefix** – optional prefix string of files to	download and group into single table 
+    - **Delimiter** – (DEFAULT ,) delimiter remote csv file	(default , ) 
+    - **Enclosure** – (DEFAULT ") enclosure of remote csv file
 
 ### Sample configurations / use cases
 
