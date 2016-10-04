@@ -20,7 +20,8 @@ last retrieval. All specified content is downloaded at the first run. Note that 
 The extractor now supports FTP, FTPS and SFTP protocols.
 
 ### Configuration parameters
-- **FTP host URL** – (REQ) url of FTP host  
+- **FTP host URL** – (REQ) url of FTP host
+- **FTP host port** - optional parameter allowing to specify alternative port. If null, the default port for selected protocol is used.  
 - **FTP user name** – (REQ) FTP user name  
 - **FTP password** – (REQ) FTP password 
 - **FTP protocol** – (REQ) Specifies the FTP protocol (FTP, FTPS and SFTP are currently supported) 
