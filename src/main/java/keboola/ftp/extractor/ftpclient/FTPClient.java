@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
+import org.apache.commons.net.ftp.FTP;
 
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
@@ -25,6 +26,7 @@ public class FTPClient implements IFTPClient {
     private String userName;
     private String pass;
     private String url;
+    private Integer port;
     private final TimeZone hostTz;
     private org.apache.commons.net.ftp.FTPClient ftpClient;
 
@@ -33,12 +35,18 @@ public class FTPClient implements IFTPClient {
      * @param userName
      * @param pass
      * @param url
-     * @param tz Timezone of host machine
+     * @param port
+     * @param hostTz Timezone of host machine
      */
-    public FTPClient(String userName, String pass, String url, TimeZone hostTz) {
+    public FTPClient(String userName, String pass, String url, Integer port, TimeZone hostTz) {
         this.userName = userName;
         this.pass = pass;
         this.url = url;
+        if (port == null) {
+            this.port = FTP.DEFAULT_PORT;
+        } else {
+            this.port = port;
+        }
         this.hostTz = hostTz;
         ftpClient = new org.apache.commons.net.ftp.FTPClient();
         //set buffer size
@@ -53,7 +61,7 @@ public class FTPClient implements IFTPClient {
      * @throws IOException
      */
     public boolean connect() throws SocketException, IOException {
-        ftpClient.connect(url);
+        ftpClient.connect(url, this.port);
         //login to server
         if (!ftpClient.login(this.userName, this.pass)) {
             ftpClient.logout();

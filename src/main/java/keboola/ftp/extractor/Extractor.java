@@ -5,9 +5,7 @@ package keboola.ftp.extractor;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -34,19 +32,19 @@ import keboola.ftp.extractor.utils.MergeException;
  * @created 2016
  */
 public class Extractor {
-
+    
     public static void main(String[] args) {
-
+        
         if (args.length == 0) {
             System.out.print("No parameters provided.");
             System.exit(1);
         }
         String dataPath = args[0];
-
+        
         String outTablesPath = dataPath + File.separator + "out" + File.separator + "tables"; //parse config
 
         KBCConfig config = null;
-
+        
         File confFile = new File(args[0] + File.separator + "config.json");
         if (!confFile.exists()) {
             System.err.println("config.json does not exist!");
@@ -62,7 +60,7 @@ public class Extractor {
             System.err.println(ex.getMessage());
             System.exit(1);
         }
-
+        
         if (!config.validate()) {
             System.out.println(config.getValidationError());
             System.err.println(config.getValidationError());
@@ -87,6 +85,7 @@ public class Extractor {
         IFTPClient ftpClient = null;
         try {
             ftpClient = FTPClientBuilder.create(confParams.getProtocol(), confParams.getFtpUrl())
+                    .setPort(confParams.getPort())
                     .setUser(confParams.getUser())
                     .setPass(confParams.getPass())
                     .setHostTz(TimeZone.getTimeZone(confParams.getTimezone())).build();
@@ -95,13 +94,13 @@ public class Extractor {
             //ex.printStackTrace();
             System.exit(ex.getSeverity());
         }
-
+        
         try {
             ftpClient.connect();
         } catch (IOException ex) {
             Logger.getLogger(Extractor.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
         List<VisitedFolder> visitedFoldersCurrent = new ArrayList();
         Map<String, Date> retrievedFiles = null;
         //Map<String, Date> prevImpFiles = null;
@@ -141,14 +140,14 @@ public class Extractor {
                     File f = new File(mapping.getFtpPath());
                     retrievedFiles = ftpClient.downloadFile(f.getParent(), f.getName(), outTablesPath);
                 }
-
+                
                 count += retrievedFiles.size();
 
                 //create historical state record for current folder
                 currDate = new Date();
                 VisitedFolder f = new VisitedFolder(mapping.getFtpPath(), retrievedFiles, currDate, mapping);
                 visitedFoldersCurrent.add(f);
-
+                
                 if (count == 0) {
                     continue;
                 }
@@ -170,7 +169,7 @@ public class Extractor {
                         System.exit(2);
                     }
                 }
-
+                
             }
         } catch (FtpException ex) {
             System.out.println("Failed to download files. " + ex.getMessage());
@@ -191,9 +190,9 @@ public class Extractor {
         } catch (IOException ex) {
             Logger.getLogger(Extractor.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
         System.out.println(count + " files successfuly downloaded.");
-
+        
     }
-
+    
 }

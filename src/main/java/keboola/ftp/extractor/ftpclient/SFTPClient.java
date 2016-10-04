@@ -38,22 +38,29 @@ public class SFTPClient implements IFTPClient {
     private String userName;
     private String pass;
     private String url;
+    private Integer port;
     private JSch ftpClient;
     private Session session;
     private ChannelSftp sftpChannel;
+
+    private static final int DEFAULT_PORT = 22;
 
     /**
      *
      * @param userName
      * @param pass
      * @param url
+     * @param port
      * @param hostTz
      */
-    public SFTPClient(String userName, String pass, String url) {
+    public SFTPClient(String userName, String pass, String url, Integer port) {
         this.userName = userName;
         this.pass = pass;
         this.url = url;
         ftpClient = new JSch();
+        if (port == null) {
+            this.port = DEFAULT_PORT;
+        }
 
     }
 
@@ -67,7 +74,7 @@ public class SFTPClient implements IFTPClient {
     public boolean connect() throws SocketException, IOException {
         try {
 
-            this.session = ftpClient.getSession(userName, url);
+            this.session = ftpClient.getSession(userName, url, port);
             /*Ignore unknown host keys*/
             java.util.Properties config = new java.util.Properties();
             config.put("StrictHostKeyChecking", "no");

@@ -6,6 +6,11 @@
             "type": "string",
             "title": "FTP host URL"
         },
+        "port": {
+            "type": ["null", "integer"],
+            "title": "FTP host port",
+            "default": null
+        },
         "user": {
             "type": "string",
             "title": "FTP user name"
@@ -754,6 +759,7 @@
     },
     "required": [
         "ftpUrl",
+        "port",
         "user",
         "#pass",
         "protocol",

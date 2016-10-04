@@ -19,6 +19,7 @@ public class FTPClientBuilder {
     private String url;
     private Protocol protocol;
     private TimeZone hostTz;
+    private Integer port;
 
     /**
      * Create FTPClientBuilder with specified endpoint url and protocol and
@@ -40,6 +41,7 @@ public class FTPClientBuilder {
         this.user = user;
         this.pass = pass;
         this.url = url;
+        this.port = null;
     }
 
     public static FTPClientBuilder create(String protocol, String url) throws FtpException {
@@ -48,6 +50,11 @@ public class FTPClientBuilder {
 
     public FTPClientBuilder setUser(String user) {
         this.user = user;
+        return this;
+    }
+
+    public FTPClientBuilder setPort(Integer port) {
+        this.port = port;
         return this;
     }
 
@@ -64,11 +71,11 @@ public class FTPClientBuilder {
     public IFTPClient build() throws FtpException {
         switch (protocol) {
             case FTP:
-                return new FTPClient(user, pass, url, hostTz);
+                return new FTPClient(user, pass, url, port, hostTz);
             case FTPS:
-                return new FTPClient(user, pass, url, hostTz);
+                return new FTPClient(user, pass, url, port, hostTz);
             case SFTP:
-                return new SFTPClient(user, pass, url);
+                return new SFTPClient(user, pass, url, port);
             default:
                 throw new FtpException("Unsupported protocol!");
         }

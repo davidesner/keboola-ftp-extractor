@@ -33,6 +33,8 @@ public class KBCParameters {
     private Date date_to;
     @JsonProperty("ftpUrl")
     private String ftpUrl;
+    @JsonProperty("port")
+    private Integer port;
     @JsonProperty("user")
     private String user;
     @JsonProperty("#pass")
@@ -59,12 +61,13 @@ public class KBCParameters {
     }
 
     @JsonCreator
-    public KBCParameters(@JsonProperty("ftpUrl") String ftpUrl, @JsonProperty("user") String user, @JsonProperty("#pass") String pass,
+    public KBCParameters(@JsonProperty("ftpUrl") String ftpUrl, @JsonProperty("port") Integer port, @JsonProperty("user") String user, @JsonProperty("#pass") String pass,
             @JsonProperty("protocol") String protocol, @JsonProperty("timezone") String timezone,
             @JsonProperty("dateFrom") int daysInterval, @JsonProperty("dateTo") String dateTo,
             @JsonProperty("mappings") ArrayList<FtpMapping> mappings) throws ParseException {
         parametersMap = new HashMap();
         this.ftpUrl = ftpUrl;
+        this.port = port;
         this.user = user;
         this.pass = pass;
         this.mappings = mappings;
@@ -226,6 +229,14 @@ public class KBCParameters {
 
     public void setTimezone(String timezone) {
         this.timezone = timezone;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
     }
 
 }
