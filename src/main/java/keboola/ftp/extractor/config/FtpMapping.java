@@ -4,6 +4,7 @@ package keboola.ftp.extractor.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Arrays;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -34,8 +35,8 @@ public class FtpMapping {
             @JsonProperty("enclosure") String enclosure, @JsonProperty("extension") String extension) {
         this.ftpPath = ftpPath;
         this.sapiPath = sapiPath;
-        this.delimiter = delimiter;
-        this.enclosure = enclosure;
+        this.delimiter = StringUtils.defaultIfEmpty(delimiter, ",");
+        this.enclosure = StringUtils.defaultIfEmpty(enclosure, "\"");
 
         if (isFolder != null) {
             this.isFolder = isFolder;
