@@ -12,7 +12,7 @@ import java.util.TimeZone;
 public class FTPClientBuilder {
 
     public static enum Protocol {
-        FTP, FTPS, SFTP
+        FTP, FTPS_IMPLICIT, FTPS, FTPS_EXPLICIT, SFTP
     };
     private String user;
     private String pass;
@@ -27,24 +27,15 @@ public class FTPClientBuilder {
      *
      * @param pType
      */
-    private FTPClientBuilder(String protocol, String user, String pass, String url) throws FtpException {
-
-        if (Protocol.FTP.name().equals(protocol)) {
-            this.protocol = Protocol.FTP;
-        } else if (Protocol.SFTP.name().equals(protocol)) {
-            this.protocol = Protocol.SFTP;
-        } else if (Protocol.FTPS.name().equals(protocol)) {
-            this.protocol = Protocol.FTPS;
-        } else {
-            throw new FtpException("Protocol: " + protocol + " is unsupported!");
-        }
+    private FTPClientBuilder(Protocol protocol, String user, String pass, String url) throws FtpException {
+    	this.protocol = protocol;
         this.user = user;
         this.pass = pass;
         this.url = url;
         this.port = null;
     }
 
-    public static FTPClientBuilder create(String protocol, String url) throws FtpException {
+    public static FTPClientBuilder create(Protocol protocol, String url) throws FtpException {
         return new FTPClientBuilder(protocol, "", "", url);
     }
 
@@ -71,9 +62,13 @@ public class FTPClientBuilder {
     public IFTPClient build() throws FtpException {
         switch (protocol) {
             case FTP:
-                return new FTPClient(user, pass, url, port, hostTz);
-            case FTPS:
-                return new FTPClient(user, pass, url, port, hostTz);
+                return new FTPClient(user, pass, url, port, hostTz, protocol);
+            case FTPS://legacy opton
+            	return new FTPClient(user, pass, url, port, hostTz, Protocol.FTPS_IMPLICIT);
+            case FTPS_IMPLICIT:
+            	return new FTPClient(user, pass, url, port, hostTz, protocol);
+            case FTPS_EXPLICIT:
+                return new FTPClient(user, pass, url, port, hostTz, protocol);
             case SFTP:
                 return new SFTPClient(user, pass, url, port);
             default:

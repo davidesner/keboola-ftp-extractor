@@ -1,6 +1,5 @@
 package keboola.ftp.extractor.ftpclient;
 
-import keboola.ftp.extractor.ftpclient.filters.FtpFilters;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,11 +8,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
-import org.apache.commons.net.ftp.FTP;
 
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
 import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.ftp.FTPSClient;
+import org.apache.commons.net.util.TrustManagerUtils;
+
+import keboola.ftp.extractor.ftpclient.FTPClientBuilder.Protocol;
+import keboola.ftp.extractor.ftpclient.filters.FtpFilters;
 
 /**
  * FTP FTPClient for handling FTP connections
@@ -23,6 +27,7 @@ import org.apache.commons.net.ftp.FTPReply;
  */
 public class FTPClient implements IFTPClient {
 
+	public static final int DEFAUTL_SSL_PORT = 990;
     private String userName;
     private String pass;
     private String url;
@@ -38,21 +43,54 @@ public class FTPClient implements IFTPClient {
      * @param port
      * @param hostTz Timezone of host machine
      */
-    public FTPClient(String userName, String pass, String url, Integer port, TimeZone hostTz) {
-        this.userName = userName;
-        this.pass = pass;
-        this.url = url;
-        if (port == null) {
-            this.port = FTP.DEFAULT_PORT;
-        } else {
-            this.port = port;
-        }
-        this.hostTz = hostTz;
-        ftpClient = new org.apache.commons.net.ftp.FTPClient();
-        //set buffer size
+    public FTPClient(String userName, String pass, String url, Integer port, TimeZone hostTz, Protocol protocol) {
+		this.userName = userName;
+		this.pass = pass;
+		this.url = url;
+
+		this.hostTz = hostTz;
+		switch (protocol) {
+		case FTPS_IMPLICIT:
+			setUptFtpsClientImplicit(port);
+			break;
+		case FTPS_EXPLICIT:
+			System.setProperty("https.protocols", "TLSv1");
+			setUptFtpsClientExplicit(port);
+			break;
+		case FTP:
+		default:
+			setUpDefaultFtpClient(port);
+		}
+		//set buffer size
         this.ftpClient.setBufferSize(1024 * 1024);
     }
 
+    private void setUpDefaultFtpClient(Integer port) {
+    	ftpClient = new org.apache.commons.net.ftp.FTPClient();
+		if (port == null) {
+			this.port = FTP.DEFAULT_PORT;
+		}
+    }
+
+    private void setUptFtpsClientImplicit(Integer port) {
+    	ftpClient = new FTPSClient(true);
+		if (port == null) {
+			this.port = DEFAUTL_SSL_PORT;
+		}
+		setTrustManager();
+    }
+
+    private void setUptFtpsClientExplicit(Integer port) {    	  	
+    	ftpClient = new FTPSClient(false);
+    	if (port == null) {
+    		this.port = FTP.DEFAULT_PORT;
+    	}    	
+    	setTrustManager();
+    }
+
+    private void setTrustManager() {
+    	((FTPSClient) ftpClient).setTrustManager(TrustManagerUtils.getAcceptAllTrustManager());
+    }
     /**
      * Establishes connection
      *

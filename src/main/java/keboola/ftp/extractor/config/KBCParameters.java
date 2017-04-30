@@ -2,22 +2,24 @@
  */
 package keboola.ftp.extractor.config;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
+
+import org.apache.commons.lang3.EnumUtils;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import keboola.ftp.extractor.ftpclient.FTPClientBuilder;
+import keboola.ftp.extractor.ftpclient.FTPClientBuilder.Protocol;
 
 /**
  *
@@ -62,38 +64,29 @@ public class KBCParameters {
 
     @JsonCreator
     public KBCParameters(@JsonProperty("ftpUrl") String ftpUrl, @JsonProperty("port") Integer port, @JsonProperty("user") String user, @JsonProperty("#pass") String pass,
-            @JsonProperty("protocol") String protocol, @JsonProperty("timezone") String timezone,
-            @JsonProperty("dateFrom") int daysInterval, @JsonProperty("dateTo") String dateTo,
-            @JsonProperty("mappings") ArrayList<FtpMapping> mappings) throws ParseException {
-        parametersMap = new HashMap();
-        this.ftpUrl = ftpUrl;
-        this.port = port;
-        this.user = user;
-        this.pass = pass;
-        this.mappings = mappings;
-        this.dateTo = dateTo;
-        this.protocol = protocol;
-        this.timezone = timezone;
-        if (protocol != null) {
-            if (protocol.equals(FTPClientBuilder.Protocol.FTP.name())) {
-                this.ftpProtocol = FTPClientBuilder.Protocol.FTP;
-            } else if (protocol.equals(FTPClientBuilder.Protocol.SFTP.name())) {
-                this.ftpProtocol = FTPClientBuilder.Protocol.SFTP;
-            } else if (protocol.equals(FTPClientBuilder.Protocol.FTPS.name())) {
-                this.ftpProtocol = FTPClientBuilder.Protocol.FTPS;
-            } else {
-                this.ftpProtocol = FTPClientBuilder.Protocol.FTP;
-            }
-        } else {
-            this.ftpProtocol = FTPClientBuilder.Protocol.FTP;
-            this.protocol = FTPClientBuilder.Protocol.FTP.name();
-        }
-        if (dateTo != null) {
-            setDate_to(dateTo);
-        }
-        if (dateFrom != null) {
-            setDate_from(dateFrom);
-        }
+			@JsonProperty("protocol") String protocol, @JsonProperty("timezone") String timezone,
+			@JsonProperty("dateFrom") int daysInterval, @JsonProperty("dateTo") String dateTo,
+			@JsonProperty("mappings") ArrayList<FtpMapping> mappings) throws ParseException {
+		parametersMap = new HashMap();
+		this.ftpUrl = ftpUrl;
+		this.port = port;
+		this.user = user;
+		this.pass = pass;
+		this.mappings = mappings;
+		this.dateTo = dateTo;
+		this.protocol = protocol;
+		this.timezone = timezone;
+		this.ftpProtocol = EnumUtils.getEnum(Protocol.class, protocol);
+		if (protocol == null) {
+			this.ftpProtocol = FTPClientBuilder.Protocol.FTP;
+			this.protocol = FTPClientBuilder.Protocol.FTP.name();
+		}
+		if (dateTo != null) {
+			setDate_to(dateTo);
+		}
+		if (dateFrom != null) {
+			setDate_from(dateFrom);
+		}
 
         //set param map
         parametersMap.put("ftpUrl", ftpUrl);

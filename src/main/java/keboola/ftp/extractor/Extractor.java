@@ -11,18 +11,19 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import keboola.ftp.extractor.config.FtpMapping;
-import keboola.ftp.extractor.config.KBCConfig;
 import keboola.ftp.extractor.config.JsonConfigParser;
+import keboola.ftp.extractor.config.KBCConfig;
 import keboola.ftp.extractor.config.KBCParameters;
 import keboola.ftp.extractor.config.tableconfig.ManifestBuilder;
 import keboola.ftp.extractor.config.tableconfig.ManifestFile;
 import keboola.ftp.extractor.ftpclient.FTPClientBuilder;
 import keboola.ftp.extractor.ftpclient.FtpException;
 import keboola.ftp.extractor.ftpclient.IFTPClient;
+import keboola.ftp.extractor.state.JsonStateWriter;
 import keboola.ftp.extractor.state.VisitedFolder;
 import keboola.ftp.extractor.state.VisitedFoldersList;
-import keboola.ftp.extractor.state.JsonStateWriter;
 import keboola.ftp.extractor.utils.CsvFileMerger;
 import keboola.ftp.extractor.utils.MergeException;
 
@@ -84,7 +85,7 @@ public class Extractor {
         List<FtpMapping> mappings = confParams.getMappings();
         IFTPClient ftpClient = null;
         try {
-            ftpClient = FTPClientBuilder.create(confParams.getProtocol(), confParams.getFtpUrl())
+            ftpClient = FTPClientBuilder.create(confParams.getFtpProtocol(), confParams.getFtpUrl())
                     .setPort(confParams.getPort())
                     .setUser(confParams.getUser())
                     .setPass(confParams.getPass())
@@ -99,6 +100,9 @@ public class Extractor {
             ftpClient.connect();
         } catch (IOException ex) {
             Logger.getLogger(Extractor.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("Failed to create FTP client. " + ex.getMessage());
+            //ex.printStackTrace();
+            System.exit(1);
         }
         
         List<VisitedFolder> visitedFoldersCurrent = new ArrayList();
