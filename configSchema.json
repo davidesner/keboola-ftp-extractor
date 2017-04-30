@@ -22,7 +22,7 @@
         "protocol": {
             "type": "string",
             "title": "FTP protocol",
-            "enum": ["FTP", "FTPS", "SFTP"],
+            "enum": ["FTP", "FTPS", "SFTP", "FTPS_IMPLICIT", "FTPS_EXPLICIT"],
             "default": "FTP"
 
         },
