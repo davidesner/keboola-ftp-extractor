@@ -13,7 +13,7 @@ public class Main {
 			Extractor.run(args);
 		} catch (Exception e) {
 			Logger.getAnonymousLogger().log(Level.SEVERE, "Extraction failed", e);
-			e.printStackTrace();
+			System.exit(2);
 		}
 
 	}

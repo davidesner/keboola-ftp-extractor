@@ -77,7 +77,7 @@ public class KBCParameters {
 		this.protocol = protocol;
 		this.timezone = timezone;
 		this.ftpProtocol = EnumUtils.getEnum(Protocol.class, protocol);
-		if (protocol == null) {
+		if (ftpProtocol == null) {
 			this.ftpProtocol = FTPClientBuilder.Protocol.FTP;
 			this.protocol = FTPClientBuilder.Protocol.FTP.name();
 		}

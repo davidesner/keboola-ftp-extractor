@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.SocketException;
+import java.security.GeneralSecurityException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,24 +43,32 @@ public class FTPClient implements IFTPClient {
      * @param url
      * @param port
      * @param hostTz Timezone of host machine
+     * @throws FtpException 
+     * @throws GeneralSecurityException 
      */
-    public FTPClient(String userName, String pass, String url, Integer port, TimeZone hostTz, Protocol protocol) {
+    public FTPClient(String userName, String pass, String url, Integer port, TimeZone hostTz, Protocol protocol) throws FtpException {
 		this.userName = userName;
 		this.pass = pass;
 		this.url = url;
 
 		this.hostTz = hostTz;
-		switch (protocol) {
-		case FTPS_IMPLICIT:
-			setUptFtpsClientImplicit(port);
-			break;
-		case FTPS_EXPLICIT:
-			System.setProperty("https.protocols", "TLSv1");
-			setUptFtpsClientExplicit(port);
-			break;
-		case FTP:
-		default:
-			setUpDefaultFtpClient(port);
+		try {
+			switch (protocol) {
+			case FTPS_IMPLICIT:
+				setUptFtpsClientImplicit(port);
+				break;
+			case FTPS_EXPLICIT:
+				System.setProperty("https.protocols", "TLSv1");
+				setUptFtpsClientExplicit(port);
+				break;
+			case FTP:
+				setUpDefaultFtpClient(port);
+				break;
+			default:
+				setUpDefaultFtpClient(port);
+			}
+		} catch (GeneralSecurityException e) {
+			throw new FtpException(e.getMessage(), 1);
 		}
 		//set buffer size
         this.ftpClient.setBufferSize(1024 * 1024);
@@ -80,7 +89,7 @@ public class FTPClient implements IFTPClient {
 		setTrustManager();
     }
 
-    private void setUptFtpsClientExplicit(Integer port) {    	  	
+    private void setUptFtpsClientExplicit(Integer port) throws GeneralSecurityException {    	  	
     	ftpClient = new FTPSClient(false);
     	if (port == null) {
     		this.port = FTP.DEFAULT_PORT;

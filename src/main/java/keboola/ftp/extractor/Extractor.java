@@ -54,7 +54,7 @@ public class Extractor {
         //Parse config file
         try {
             if (confFile.exists() && !confFile.isDirectory()) {            	
-                config = JsonConfigParser.parseFile(confFile);
+                config = JsonConfigParser.parseFile(confFile);              
             }
         } catch (Exception ex) {
             System.out.println("Failed to parse config file");
@@ -71,6 +71,7 @@ public class Extractor {
         File stateFile = new File(dataPath + File.separator + "in" + File.separator + "state.json");
         VisitedFoldersList visitedFolders = null;
         if (stateFile.exists()) {
+        	
             try {
                 visitedFolders = (VisitedFoldersList) JsonConfigParser.parseFile(stateFile, VisitedFoldersList.class);
             } catch (IOException ex) {
