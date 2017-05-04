@@ -78,6 +78,8 @@ public class FTPClient implements IFTPClient {
     	ftpClient = new org.apache.commons.net.ftp.FTPClient();
 		if (port == null) {
 			this.port = FTP.DEFAULT_PORT;
+		} else {
+			this.port = port;
 		}
     }
 
@@ -85,6 +87,8 @@ public class FTPClient implements IFTPClient {
     	ftpClient = new FTPSClient(true);
 		if (port == null) {
 			this.port = DEFAUTL_SSL_PORT;
+		} else {
+			this.port = port;
 		}
 		setTrustManager();
     }
@@ -93,7 +97,9 @@ public class FTPClient implements IFTPClient {
     	ftpClient = new FTPSClient(false);
     	if (port == null) {
     		this.port = FTP.DEFAULT_PORT;
-    	}    	
+    	}  else {
+			this.port = port;
+		}   	
     	setTrustManager();
     }
 
