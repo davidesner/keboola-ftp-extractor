@@ -34,7 +34,7 @@ import keboola.ftp.extractor.utils.MergeException;
  */
 public class Extractor {
     
-    public static void main(String[] args) {
+    public static void run(String[] args) throws Exception{
         
         if (args.length == 0) {
             System.out.print("No parameters provided.");
@@ -53,7 +53,7 @@ public class Extractor {
         }
         //Parse config file
         try {
-            if (confFile.exists() && !confFile.isDirectory()) {
+            if (confFile.exists() && !confFile.isDirectory()) {            	
                 config = JsonConfigParser.parseFile(confFile);
             }
         } catch (Exception ex) {

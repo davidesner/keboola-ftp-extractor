@@ -19,12 +19,15 @@ last retrieval. All specified content is downloaded at the first run. Note that 
 
 The extractor now supports FTP, FTPS and SFTP protocols.
 
+### FTP over SSL, Explicit FTPS
+The component allows both implicit FTP over SSL (default port 990) and explicit FTPS (default port 21). By default it supports all certificates signed by Root CAs.
+
 ### Configuration parameters
 - **FTP host URL** – (REQ) url of FTP host
 - **FTP host port** - optional parameter allowing to specify alternative port. If null, the default port for selected protocol is used.  
 - **FTP user name** – (REQ) FTP user name  
 - **FTP password** – (REQ) FTP password 
-- **FTP protocol** – (REQ) Specifies the FTP protocol (FTP, FTPS and SFTP are currently supported) 
+- **FTP protocol** – (REQ) Specifies the FTP protocol (FTP, FTPS_IMPLICIT, FTPS_EXPLICIT and SFTP are currently supported) 
 - **FTP host timezone** – (REQ) timezone of the FTP host machine. This parameter needs to be specified for the extractor to work properly. Due to FTP protocol limitation, the timestamps of remote files reflects the timezone setting of the remote server, however the TZ information is not passed by any way. If this is not set correctly, the extractor may not retrieve all newly uploaded files, since it is based on their timestamps. (NOTE: this parameter does not affect SFTP protocol) 
 - **mappings** - (REQ) list of files (folders) to 	download 
     - **Remote Path** - (REQ) remote Path (by default a

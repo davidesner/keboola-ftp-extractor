@@ -23,7 +23,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>keboola.ftp.extractor.Extractor</mainClass>                  
+                    <mainClass>keboola.ftp.extractor.Main</mainClass>                  
                 </configuration>
             </plugin>
         </plugins>
