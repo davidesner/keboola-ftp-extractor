@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
+import javax.net.ssl.SSLException;
+
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
@@ -67,7 +69,7 @@ public class FTPClient implements IFTPClient {
 			default:
 				setUpDefaultFtpClient(port);
 			}
-		} catch (GeneralSecurityException e) {
+		} catch (GeneralSecurityException | IOException e) {
 			throw new FtpException(e.getMessage(), 1);
 		}
 		//set buffer size
@@ -93,14 +95,14 @@ public class FTPClient implements IFTPClient {
 		setTrustManager();
     }
 
-    private void setUptFtpsClientExplicit(Integer port) throws GeneralSecurityException {    	  	
-    	ftpClient = new FTPSClient(false);
+    private void setUptFtpsClientExplicit(Integer port) throws GeneralSecurityException, SSLException, IOException {    	  	
+    	ftpClient = new FTPSClient("SSL",false);
     	if (port == null) {
     		this.port = FTP.DEFAULT_PORT;
     	}  else {
 			this.port = port;
-		}   	
-    	setTrustManager();
+		}    	
+    	setTrustManager();    	
     }
 
     private void setTrustManager() {
@@ -114,6 +116,9 @@ public class FTPClient implements IFTPClient {
      * @throws IOException
      */
     public boolean connect() throws SocketException, IOException {
+    	if (ftpClient.isConnected()) {
+    		return true;
+    	}
         ftpClient.connect(url, this.port);
         //login to server
         if (!ftpClient.login(this.userName, this.pass)) {
@@ -126,9 +131,16 @@ public class FTPClient implements IFTPClient {
             ftpClient.disconnect();
             return false;
         }
+        if (ftpClient instanceof FTPSClient){
+        	setFtpSecurity();
+        }
         //passive mode
         ftpClient.enterLocalPassiveMode();
         return true;
+    }
+
+    private void setFtpSecurity() throws SSLException, IOException {
+    	((FTPSClient) ftpClient).execPROT("P");
     }
 
     public void disconnect() throws IOException {
@@ -198,8 +210,12 @@ public class FTPClient implements IFTPClient {
             throw new FtpException("Error connecting to ftp server. " + ex.getMessage());
         }
         try {
+        	
             ftpClient.changeWorkingDirectory(remoteFolder);
+         	
+        	((FTPSClient) ftpClient).getEnabledProtocols();
             int returnCode = ftpClient.getReplyCode();
+            String reply = ftpClient.getReplyString();
             if (returnCode == 550) {
                 throw new FtpException("Remote folder: '" + remoteFolder + "' does not exist or is not a folder!");
             }
