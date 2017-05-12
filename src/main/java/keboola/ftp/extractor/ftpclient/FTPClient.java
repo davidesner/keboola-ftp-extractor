@@ -212,10 +212,7 @@ public class FTPClient implements IFTPClient {
         try {
         	
             ftpClient.changeWorkingDirectory(remoteFolder);
-         	
-        	((FTPSClient) ftpClient).getEnabledProtocols();
             int returnCode = ftpClient.getReplyCode();
-            String reply = ftpClient.getReplyString();
             if (returnCode == 550) {
                 throw new FtpException("Remote folder: '" + remoteFolder + "' does not exist or is not a folder!");
             }
