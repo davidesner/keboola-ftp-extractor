@@ -96,7 +96,7 @@ public class FtpMapping {
         if (delimiter == null) {
             return ",";
         }
-        return delimiter;
+        return String.valueOf(getDelimiterChar());
     }
     public char getDelimiterChar() {
     	//default if null
@@ -116,7 +116,7 @@ public class FtpMapping {
             return "\"";
         }
 
-        return enclosure;
+        return String.valueOf(getEnclosureChar());
     }
     public char getEnclosureChar() {
     	//default if null
