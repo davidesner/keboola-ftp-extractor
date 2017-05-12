@@ -157,7 +157,7 @@ public class Extractor {
                     continue;
                 }
                 try {
-                    CsvFileMerger.dataStructureMatch(retrievedFiles.keySet(), outTablesPath, mapping.getDelimiter().charAt(0), mapping.getEnclosure().charAt(0));
+                    CsvFileMerger.dataStructureMatch(retrievedFiles.keySet(), outTablesPath, mapping.getDelimiterChar(), mapping.getEnclosureChar());
                 } catch (MergeException ex) {
                     System.out.println("Failed to merge files. " + ex.getMessage());
                     System.err.println("Failed to merge files. " + ex.getMessage());

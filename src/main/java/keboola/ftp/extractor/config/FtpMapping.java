@@ -2,9 +2,12 @@
  */
 package keboola.ftp.extractor.config;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Arrays;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *
@@ -95,6 +98,13 @@ public class FtpMapping {
         }
         return delimiter;
     }
+    public char getDelimiterChar() {
+    	//default if null
+    	if (delimiter == null) {
+    		return ',';
+    	}
+    	return StringEscapeUtils.unescapeJava(delimiter).charAt(0);
+    }
 
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
@@ -107,6 +117,13 @@ public class FtpMapping {
         }
 
         return enclosure;
+    }
+    public char getEnclosureChar() {
+    	//default if null
+    	if (enclosure == null) {
+    		return '"';
+    	}  	
+    	return StringEscapeUtils.unescapeJava(enclosure).charAt(0);
     }
 
     public void setEnclosure(String enclosure) {
