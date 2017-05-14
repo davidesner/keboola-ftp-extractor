@@ -3,14 +3,22 @@
 package keboola.ftp.extractor;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import javax.print.attribute.standard.Compression;
 
 import keboola.ftp.extractor.config.FtpMapping;
 import keboola.ftp.extractor.config.JsonConfigParser;
@@ -25,6 +33,7 @@ import keboola.ftp.extractor.state.JsonStateWriter;
 import keboola.ftp.extractor.state.VisitedFolder;
 import keboola.ftp.extractor.state.VisitedFoldersList;
 import keboola.ftp.extractor.utils.CsvFileMerger;
+import keboola.ftp.extractor.utils.FileHandler;
 import keboola.ftp.extractor.utils.MergeException;
 
 /**
@@ -156,28 +165,16 @@ public class Extractor {
                 if (count == 0) {
                     continue;
                 }
-                try {
-                    CsvFileMerger.dataStructureMatch(retrievedFiles.keySet(), outTablesPath, mapping.getDelimiterChar(), mapping.getEnclosureChar());
-                } catch (MergeException ex) {
-                    System.out.println("Failed to merge files. " + ex.getMessage());
-                    System.err.println("Failed to merge files. " + ex.getMessage());
-                    System.exit(1);
-                }
-                //build manifest files
-                for (String fileName : retrievedFiles.keySet()) {
-                    ManifestFile manFile = new ManifestFile(mapping.getSapiPath(), mapping.isIncremental(), mapping.getPkey(), mapping.getDelimiter(), mapping.getEnclosure());
-                    try {
-                        ManifestBuilder.buildManifestFile(manFile, outTablesPath, fileName);
-                    } catch (IOException ex) {
-                        System.out.println("Failed to build manifest file. " + ex.getMessage());
-                        System.err.println("Failed to build manifest file. " + ex.getMessage());
-                        System.exit(2);
-                    }
-                }
+                
+                if (!Compression.NONE.equals(mapping.getCompressionEnum())) {
+                	proccessArchivedFiles(outTablesPath, retrievedFiles.keySet(), mapping);
+                } else {
+                	processNormalFiles(outTablesPath, retrievedFiles.keySet(), mapping);
+                }               
+               
                 
             }
         } catch (FtpException ex) {
-            System.out.println("Failed to download files. " + ex.getMessage());
             System.err.println("Failed to download files. " + ex.getMessage());
             //ex.printStackTrace();
             System.exit(ex.getSeverity());
@@ -199,5 +196,104 @@ public class Extractor {
         System.out.println(count + " files successfuly downloaded.");
         
     }
+
+	private static void proccessArchivedFiles(String outPath, Collection<String> files, FtpMapping mapping) {
+		List<String> resultFileNames = new ArrayList<>();
+		try {
+			for (String file : files) {
+				resultFileNames.addAll(unzip(file, outPath));
+			}
+			//delete zipfiles
+			FileHandler.deleteFiles(files.stream().map(f->outPath + File.separator + f).collect(Collectors.toList()));
+			//process unzipped results
+			processNormalFiles(outPath, resultFileNames, mapping);
+		} catch (Exception e) {
+			System.err.println("Failed to download archived files. " + e.getMessage());
+			System.exit(1);
+		}
+	}
+
+	private static void processNormalFiles(String outPath, Collection<String> files, FtpMapping mapping) {
+		try {
+			CsvFileMerger.dataStructureMatch(files, outPath, mapping.getDelimiterChar(), mapping.getEnclosureChar());
+		} catch (MergeException ex) {
+			System.err.println("Failed to merge files. " + ex.getMessage());
+			System.exit(1);
+		}
+		buildManifestFiles(new ArrayList<String>(files), mapping, outPath);
+	}
+
+    private static void buildManifestFiles(List<String> fileNames, FtpMapping mapping, String outTablesPath) {
+    	//build manifest files
+        for (String fileName : fileNames) {
+            ManifestFile manFile = new ManifestFile(mapping.getSapiPath(), mapping.isIncremental(), mapping.getPkey(), mapping.getDelimiter(), mapping.getEnclosure());
+            try {
+                ManifestBuilder.buildManifestFile(manFile, outTablesPath, fileName);
+            } catch (IOException ex) {
+                System.out.println("Failed to build manifest file. " + ex.getMessage());
+                System.err.println("Failed to build manifest file. " + ex.getMessage());
+                System.exit(2);
+            }
+        }
+    }
+    private static List<String> unzip(String fileName, String outPath) throws Exception {
+    	byte[] buffer = new byte[1024];
+    	File zipFile = new File(outPath + File.separator + fileName);
+    	List<String> resultFileNames = new ArrayList<>();
+
+       	ZipInputStream zis = null;
+       try {	
+       	//get the zip file content
+       	zis =
+       		new ZipInputStream(new FileInputStream(zipFile));
+       	//get the zipped file list entry
+       	ZipEntry ze = zis.getNextEntry();
+
+       	while(ze!=null){
+       	   
+              File newFile = new File(outPath + File.separator + ze.getName());
+
+              System.out.println("file unzip : "+ newFile.getAbsoluteFile());
+
+               //create all non exists folders
+               //else you will hit FileNotFoundException for compressed folder
+               new File(newFile.getParent()).mkdirs();
+
+               FileOutputStream fos = new FileOutputStream(newFile);
+
+               int len;
+               while ((len = zis.read(buffer)) > 0) {
+          		fos.write(buffer, 0, len);
+               }
+
+               fos.close();
+               ze = zis.getNextEntry();
+               resultFileNames.add(newFile.getName());
+       	}
+
+          
+       } catch(Exception e) {
+    	throw e;   
+       } finally {
+    	   try {
+			zis.closeEntry();
+			zis.close();
+		} catch (IOException e) {
+			//nn
+		}
+          	
+       }
+       return resultFileNames;
+    
+    }
+
+    private static String removeSuffix(String fileName) {
+    	return fileName.substring(0, fileName.lastIndexOf('.'));
+    }
+        
+       
+    
+
+    
     
 }

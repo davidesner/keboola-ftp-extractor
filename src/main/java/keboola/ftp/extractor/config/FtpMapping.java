@@ -4,6 +4,7 @@ package keboola.ftp.extractor.config;
 
 import java.util.Arrays;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -32,14 +33,26 @@ public class FtpMapping {
 
     private String extension;
 
+    private String compression;
+
+    public static enum Compression {
+    	NONE(""), ZIP("zip");
+    	public final String extension;
+    	
+    	Compression(String extension) {
+    		this.extension = extension;
+    	}
+    }
+
     public FtpMapping(@JsonProperty("ftpPath") String ftpPath, @JsonProperty("sapiPath") String sapiPath,
             @JsonProperty("isFolder") Integer isFolder, @JsonProperty("incremental") Integer incremental,
             @JsonProperty("pkey") String[] pkey, @JsonProperty("prefix") String prefix, @JsonProperty("delimiter") String delimiter,
-            @JsonProperty("enclosure") String enclosure, @JsonProperty("extension") String extension) {
+            @JsonProperty("enclosure") String enclosure, @JsonProperty("extension") String extension, @JsonProperty("compression") String compression) {
         this.ftpPath = ftpPath;
         this.sapiPath = sapiPath;
         this.delimiter = StringUtils.defaultIfEmpty(delimiter, ",");
         this.enclosure = StringUtils.defaultIfEmpty(enclosure, "\"");
+        this.compression = StringUtils.defaultIfEmpty(compression, Compression.NONE.name());
 
         if (isFolder != null) {
             this.isFolder = isFolder;
@@ -51,6 +64,10 @@ public class FtpMapping {
             this.extension = extension;
         } else {
             this.extension = "csv";
+        }
+        //set extension if compression used
+        if (!Compression.NONE.equals(getCompressionEnum())) {
+        	this.extension = getCompressionEnum().extension;
         }
         if (incremental != null) {
             this.incremental = incremental;
@@ -76,6 +93,9 @@ public class FtpMapping {
         }
         if (isFolder == 0 && prefix != null) {
             prefix = null;
+        }
+        if (!EnumUtils.isValidEnum(Compression.class, compression)) {
+        	message += "Invalid compression parameter!";
         }
         if (message.length() > l) {
             throw new ValidationException(message);
@@ -162,7 +182,15 @@ public class FtpMapping {
         return prefix;
     }
 
-    @Override
+    public String getCompression() {
+		return compression;
+	}
+
+    public Compression getCompressionEnum() {
+    	return EnumUtils.getEnum(Compression.class, compression);
+    }
+
+	@Override
     public boolean equals(Object obj) {
         if (!(obj instanceof FtpMapping)) {
             return false;
