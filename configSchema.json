@@ -680,6 +680,23 @@
                             ]
                         }
                     },
+                    "compression": {
+                        "type": "string",
+                        "propertyOrder": 2500,
+                        "title": "File compression",
+                        "description": "Determines the compression type. Only archives are downloaded. This parameter overrides the 'extension' parameter.",
+                        "enum": [
+                            "NONE",
+                            "ZIP"
+                        ],
+                        "default": "NONE",
+                        "options": {
+                            "enum_titles": [
+                                "None",
+                                "Zip"
+                            ]
+                        }
+                    },
                     "sapiPath": {
                         "propertyOrder": 3000,
                         "type": "string",
@@ -748,6 +765,7 @@
                     "ftpPath",
                     "sapiPath",
                     "extension",
+                    "compression",
                     "isFolder",
                     "incremental",
                     "pkey",

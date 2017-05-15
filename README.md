@@ -2,7 +2,7 @@
 Extractor component for Keboola Connection allowing to retrieve files from FTP
 server and store them in Storage. 
 
-##Funcionality
+## Funcionality
 
 Simple component allowing user to dowload specified CSV files from FTP
 repository. In current version the component allows to retrieve files
@@ -21,6 +21,8 @@ The extractor now supports FTP, FTPS and SFTP protocols.
 
 ### FTP over SSL, Explicit FTPS
 The component allows both implicit FTP over SSL (default port 990) and explicit FTPS (default port 21). By default it supports all certificates signed by Root CAs.
+### Compression
+The component newly allows to retrieve archived (ZIP) files. You can download a single zip file or all files in the folder in the same manner as when downloading csv files. I.e. you can specify `prefix` parameter or a full name. The only difference is that the `extension` parameter is ignored and the ZIP file is expected to contain only csv files of the same type - all files within the archive are merged into the single Storage table. The ZIP files must not contain folder hierarchy and all folders are ignored.
 
 ### Configuration parameters
 - **FTP host URL** – (REQ) url of FTP host
@@ -35,6 +37,7 @@ The component allows both implicit FTP over SSL (default port 990) and explicit 
     - **Table name** – (REQ) Storage bucket and table where the result will be uploaded (e.g. out.c-main.mytable).
     - **Download folder or file** – (DEFAULT FOLDER) indicator whether to
 		download a single file or the whole folder 
+    - **Compression** - (DEFAULT `None`) Specifies whether the retrieved files are archives and its' compression type. For more information see Compression section above.
     - **extension** - (DEFAULT `csv`) optional parameter specifying custom extension of files to retrieve. i.e. `txt`. If not specified all files with `csv` extension will be downloaded by default.
     - **Storage upload mode** – (DEFAULT INCREMENTAL) specifies whether
 		to upload incrementally. If set to INCREMENTAL, the pkey must be
