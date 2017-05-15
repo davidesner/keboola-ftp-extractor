@@ -18,9 +18,8 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.print.attribute.standard.Compression;
-
 import keboola.ftp.extractor.config.FtpMapping;
+import keboola.ftp.extractor.config.FtpMapping.Compression;
 import keboola.ftp.extractor.config.JsonConfigParser;
 import keboola.ftp.extractor.config.KBCConfig;
 import keboola.ftp.extractor.config.KBCParameters;
