@@ -210,8 +210,9 @@ public class FTPClient implements IFTPClient {
             throw new FtpException("Error connecting to ftp server. " + ex.getMessage());
         }
         try {
-        	
-             ftpClient.changeWorkingDirectory(remoteFolder);
+
+            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);        	
+            ftpClient.changeWorkingDirectory(remoteFolder);
             int returnCode = ftpClient.getReplyCode();
             if (returnCode == 550) {
                 throw new FtpException("Remote folder: '" + remoteFolder + "' does not exist or is not a folder!");
