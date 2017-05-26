@@ -2,8 +2,9 @@
  */
 package keboola.ftp.extractor.state;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *
@@ -31,6 +32,9 @@ public class VisitedFoldersList {
     }
 
     public VisitedFolder getFolderByPath(String folderPath) {
+    	if (visitedFolders == null) {
+    		return null;
+    	}
         for (VisitedFolder f : visitedFolders) {
             if (f.getFolderPath().contentEquals(folderPath)) {
                 return f;
