@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -155,6 +156,9 @@ public class Extractor {
 	}
 
 	private static void processNormalFiles(Collection<String> files, FtpMapping mapping) {
+		if (files == null || files.isEmpty()) {
+    		return;
+    	}
 		try {
 			CsvFileMerger.dataStructureMatch(files, outTablesPath, mapping.getDelimiterChar(), mapping.getEnclosureChar());
 		} catch (MergeException ex) {
@@ -191,16 +195,24 @@ public class Extractor {
 		if (fileNames.size() < 2) {
 			return null;
 		}
-		List<File> files = fileNames.stream().map(f -> new File(outTablesPath + File.separator)).collect(Collectors.toList());
+		List<File> files = fileNames.stream().map(f -> new File(outTablesPath + File.separator + f)).collect(Collectors.toList());
+		List<File> resultFiles = new ArrayList<>();
+		File slicedFileFolder = new File(outTablesPath + File.separator + mapping.getSapiTableName() + ".csv");
+		slicedFileFolder.mkdirs();
 		// get colums
 				String[] headerCols = CsvUtils.readHeader(files.get(0),
 						mapping.getDelimiterChar(), mapping.getEnclosureChar(), '\\', false, false);
 				// remove headers and create results
-				for (String file : fileNames) {
-					CsvUtils.removeHeaderFromCsv(new File(outTablesPath + File.separator + file));
+				for (File file : files) {
+					CsvUtils.removeHeaderFromCsv(file);
+					//move to folder
+					resultFiles.add(Files.move(file.toPath(), slicedFileFolder.toPath().resolve(file.getName())).toFile());
+					file.delete();
 				}
 				//in case some files did not contain any data
 				CsvUtils.deleteEmptyFiles(files);
+				fileNames.clear();
+				fileNames.add(slicedFileFolder.getName());
 				return headerCols;
 	}
 

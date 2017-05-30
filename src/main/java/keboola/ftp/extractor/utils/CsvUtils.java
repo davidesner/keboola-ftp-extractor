@@ -156,6 +156,9 @@ public class CsvUtils {
      * @throws Exception
      */
     public static boolean dataStructureMatch(Collection<String> fileNames, String folderPath) throws Exception {
+    	if (fileNames == null || fileNames.isEmpty()) {
+    		return true;
+    	}
         String[] headers = null;
         String headerLine = "";
         String currFile = "";

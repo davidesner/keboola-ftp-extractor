@@ -2,7 +2,6 @@
  */
 package keboola.ftp.extractor.utils;
 
-import au.com.bytecode.opencsv.CSVReader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 /**
  *
@@ -118,6 +119,9 @@ public class CsvFileMerger {
      * @throws MergeException
      */
     public static boolean dataStructureMatch(Collection<String> fileNames, String folderPath, char separator, char enclosure) throws MergeException {
+    	if (fileNames == null || fileNames.isEmpty()) {
+    		return true;
+    	}
         String[] headers = null;
         String[] refHeader = {""};
         String refFileName = "";

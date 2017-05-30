@@ -166,6 +166,14 @@ public class FtpMapping {
         return sapiPath;
     }
 
+    public String getSapiTableName() {
+    	String []  parts = sapiPath.split("\\.");
+    	if (parts.length >0) {
+    		return parts[parts.length-1];
+    	}
+    	return sapiPath;
+    }
+
     public Integer getIsFolder() {
         return isFolder;
     }
