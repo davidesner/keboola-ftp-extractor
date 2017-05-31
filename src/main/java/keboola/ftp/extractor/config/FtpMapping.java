@@ -204,7 +204,7 @@ public class FtpMapping {
             return false;
         }
         FtpMapping f = (FtpMapping) obj;
-        return this.ftpPath.equals(f.ftpPath) && this.prefix.equals(f.prefix)
+        return this.ftpPath.equals(f.ftpPath) && StringUtils.equals(this.prefix, f.prefix)
                 && this.extension.endsWith(f.extension) && this.isFolder.equals(f.isFolder)
                 && this.sapiPath.equals(f.sapiPath);
     }
