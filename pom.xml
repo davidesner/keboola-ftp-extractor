@@ -3,41 +3,44 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>esnerda.kbc</groupId>
-	<artifactId>KBC_FTP_ex</artifactId>
-	<version>1.0</version>
+	<artifactId>esnerda.keboola.ex.ftp</artifactId>
+	<version>1.2.4</version>
 	<packaging>jar</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<jackson.version>2.7.4</jackson.version>
 	</properties>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.0.0</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>esnerda.keboola.ftp.extractor.Main</mainClass>
+						</manifest>
+					</archive>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
 				<executions>
 					<execution>
+						<phase>package</phase>
 						<goals>
-							<goal>java</goal>
+							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<mainClass>keboola.ftp.extractor.Main</mainClass>
-				</configuration>
 			</plugin>
 		</plugins>
+
 	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.json</groupId>

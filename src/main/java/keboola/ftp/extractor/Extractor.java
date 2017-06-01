@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -62,7 +61,7 @@ public class Extractor {
 
 		initFtpClient();
 
-		List<VisitedFolder> visitedFoldersCurrent = new ArrayList<>();
+		List<VisitedFolder> visitedFoldersCurrent = new ArrayList<VisitedFolder>();
 		Map<String, Date> retrievedFiles = null;
 
 		Date lastRun = null;
@@ -146,7 +145,7 @@ public class Extractor {
 				resultFileNames.addAll(unzip(file, outTablesPath));
 			}
 			// delete zipfiles
-			FileHandler.deleteFiles(files.stream().map(f -> outTablesPath + File.separator + f).collect(Collectors.toList()));
+			FileHandler.deleteFiles(getFilePaths(files));
 			// process unzipped results
 			processNormalFiles(resultFileNames, mapping);
 		} catch (Exception e) {
@@ -155,6 +154,14 @@ public class Extractor {
 		}
 	}
 
+
+	private static List<String> getFilePaths(Collection<String> fileNames) {
+		List<String> res = new ArrayList<String>();
+		for (String file : fileNames) {
+			res.add(outTablesPath + File.separator + file);
+		}
+		return res;
+	}
 	private static void processNormalFiles(Collection<String> files, FtpMapping mapping) {
 		if (files == null || files.isEmpty()) {
     		return;
@@ -195,7 +202,10 @@ public class Extractor {
 		if (fileNames.size() < 2) {
 			return null;
 		}
-		List<File> files = fileNames.stream().map(f -> new File(outTablesPath + File.separator + f)).collect(Collectors.toList());
+		List<File> files = new ArrayList<>();
+		for (String name : fileNames) {
+			files.add(new File(outTablesPath + File.separator + name));
+		}
 		List<File> resultFiles = new ArrayList<>();
 		File slicedFileFolder = new File(outTablesPath + File.separator + mapping.getSapiTableName() + ".csv");
 		slicedFileFolder.mkdirs();

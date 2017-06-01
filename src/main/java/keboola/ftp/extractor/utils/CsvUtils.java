@@ -56,6 +56,14 @@ public class CsvUtils {
 				p += in.transferTo(p, l - p, out);
 			}
 		} catch (IOException ex) {
+			try {
+				fis.close();
+				in.close();
+				out.close();
+				fout.close();
+			} catch (Exception e) {
+				// do nothing.
+			}
 			throw ex;
 		} finally {
 			try {
@@ -76,9 +84,8 @@ public class CsvUtils {
 	private static final boolean isNL(int character) {
 		if ((character == -1)) {
 			return false;
-		} else {
-			return ((((char) character == '\n') || ((char) character == '\r')));
 		}
+		return ((((char) character == '\n') || ((char) character == '\r')));
 	}
 
 	public static void deleteEmptyFiles(List<File> files) {
@@ -94,9 +101,14 @@ public class CsvUtils {
 	}
 
 	public static boolean isFileEmpty(File f) throws IOException {
-		try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(f));
 			String line = br.readLine();
 			return StringUtils.isBlank(line);
+		} finally {
+			if (br != null)
+				br.close();
 		}
 	}
 
