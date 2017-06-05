@@ -24,7 +24,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>esnerda.keboola.ftp.extractor.Main</mainClass>
+							<mainClass>keboola.ftp.extractor.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
