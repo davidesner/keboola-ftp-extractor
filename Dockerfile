@@ -6,4 +6,4 @@ ENV APP_VERSION 1.2.4
 RUN git clone https://github.com/davidesner/keboola-ftp-extractor.git ./
 RUN mvn -q install
 
-ENTRYPOINT java -Xmx512m -Xms512m -jar target/esnerda.keboola.ex.ftp-1.2.4-jar-with-dependencies.jar /data  
+ENTRYPOINT java -XX:MaxRAM=500m -jar target/esnerda.keboola.ex.ftp-1.2.4-jar-with-dependencies.jar /data  
