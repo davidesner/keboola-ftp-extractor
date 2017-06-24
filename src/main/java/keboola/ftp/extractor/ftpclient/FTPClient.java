@@ -284,7 +284,9 @@ public class FTPClient implements IFTPClient {
                 throw new FtpException("Unable to download this file: " + fileName + ". It is a directory.");
             }
             FTPFile[] files = ftpClient.listFiles(fileName);
-
+            if (files == null || files.length == 0) {
+            	return downloadedFiles;
+            }
             this.ftpClient.retrieveFile(fileName, fos);
             downloadedFiles.put(fileName, files[0].getTimestamp().getTime());
         } catch (IOException ex) {

@@ -198,6 +198,13 @@ public class FtpMapping {
     	return EnumUtils.getEnum(Compression.class, compression);
     }
 
+    
+	@Override
+	public String toString() {
+		return "FtpMapping [ftpPath=" + ftpPath + ", prefix=" + prefix + ", extension=" + extension + ", compression="
+				+ compression + "]";
+	}
+
 	@Override
     public boolean equals(Object obj) {
         if (!(obj instanceof FtpMapping)) {

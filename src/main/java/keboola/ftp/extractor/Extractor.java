@@ -77,15 +77,17 @@ public class Extractor {
 				retrievedFiles = retrieveFiles(mapping, lastRun);
 
 				count += retrievedFiles.size();
+				if (count == 0 || retrievedFiles.size() == 0) {
+					log.warn("No files found for mapping: " + mapping.toString()); 
+					continue;
+				}
 
 				// create historical state record for current folder
 				currDate = new Date();
 				VisitedFolder f = new VisitedFolder(mapping.getFtpPath(), retrievedFiles, currDate, mapping);
 				visitedFoldersCurrent.add(f);
 
-				if (count == 0) {
-					continue;
-				}
+				
 
 				if (!Compression.NONE.equals(mapping.getCompressionEnum())) {
 					proccessArchivedFiles(retrievedFiles.keySet(), mapping);
