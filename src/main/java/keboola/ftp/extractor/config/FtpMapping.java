@@ -80,7 +80,7 @@ public class FtpMapping {
         this.pkey = pkey;
         this.prefix = prefix;
         
-        this.srcCharset = StringUtils.defaultIfEmpty(srcCharset,"");
+        this.srcCharset = StringUtils.defaultIfEmpty(srcCharset,"UTF-8");
 
     }
 
