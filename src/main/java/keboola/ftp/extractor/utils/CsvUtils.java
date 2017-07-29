@@ -32,7 +32,7 @@ public class CsvUtils {
 	 * @param csvFile
 	 * @throws IOException
 	 */
-	public static void removeHeaderFromCsv(File csvFile) throws IOException {
+	public static void removeHeaderFromCsv(File csvFile) throws Exception {
 		// create output file
 		File outFile = new File(csvFile.getParent() + File.separator + "tempRes");
 		FileChannel out = null;
@@ -55,29 +55,28 @@ public class CsvUtils {
 			for (long p = pos, l = in.size(); p < l;) {
 				p += in.transferTo(p, l - p, out);
 			}
-		} catch (IOException ex) {
-			try {
-				fis.close();
-				in.close();
-				out.close();
-				fout.close();
-			} catch (Exception e) {
-				// do nothing.
-			}
+		} catch (Exception ex) {			
 			throw ex;
 		} finally {
 			try {
-				fis.close();
-				in.close();
-				out.close();
-				fout.close();
+				if (fis != null) {
+					fis.close();
+				}
+				if (fout != null) {
+					fout.close();
+				}
+				if (out != null) {
+					out.close();
+				}
+				if (in != null) {
+					in.close();
+				}
 			} catch (Exception ex) {
 				// do nothing.
 			}
 		}
 
 		csvFile.delete();
-
 		outFile.renameTo(csvFile);
 	}
 

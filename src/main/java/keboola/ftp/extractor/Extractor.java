@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,6 +45,7 @@ import keboola.ftp.extractor.utils.MergeException;
  */
 public class Extractor {
 	final static Logger log = Logger.getLogger(Extractor.class);
+	private static final Charset DEFAUT_CHARSET = StandardCharsets.UTF_8;
 	
 	private static String outTablesPath;
 	private static String dataPath;
@@ -170,11 +173,23 @@ public class Extractor {
     	}
 		try {
 			CsvFileMerger.dataStructureMatch(files, outTablesPath, mapping.getDelimiterChar(), mapping.getEnclosureChar());
+			convertCharset(getFilePaths(files),mapping.getSrcCharset());
 		} catch (MergeException ex) {
 			log.error("Failed to merge files. " + ex.getMessage(), ex);
 			System.exit(1);
+		} catch (Exception e) {
+			log.error("Failed to process files. " + e.getMessage(), e);
+			System.exit(2);
 		}
 		buildManifestFiles(new ArrayList<String>(files), mapping);
+	}
+
+	private static void convertCharset(Collection<String> files, Charset srcCharset) throws Exception {
+		if (!srcCharset.equals(DEFAUT_CHARSET)) {
+			for (String f : files) {
+				FileHandler.convertFileCharset(new File(f), srcCharset, DEFAUT_CHARSET);
+			}
+		}		
 	}
 
 	private static void buildManifestFiles(List<String> fileNames, FtpMapping mapping) {

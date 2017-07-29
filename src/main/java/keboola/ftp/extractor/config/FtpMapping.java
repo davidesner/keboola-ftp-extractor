@@ -2,6 +2,7 @@
  */
 package keboola.ftp.extractor.config;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.EnumUtils;
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class FtpMapping {
 
+	private final String srcCharset;
     private final String ftpPath;
     private final String sapiPath;
 //default 1
@@ -47,7 +49,8 @@ public class FtpMapping {
     public FtpMapping(@JsonProperty("ftpPath") String ftpPath, @JsonProperty("sapiPath") String sapiPath,
             @JsonProperty("isFolder") Integer isFolder, @JsonProperty("incremental") Integer incremental,
             @JsonProperty("pkey") String[] pkey, @JsonProperty("prefix") String prefix, @JsonProperty("delimiter") String delimiter,
-            @JsonProperty("enclosure") String enclosure, @JsonProperty("extension") String extension, @JsonProperty("compression") String compression) {
+            @JsonProperty("enclosure") String enclosure, @JsonProperty("extension") String extension, @JsonProperty("compression") String compression,
+            @JsonProperty("srcCharset") String srcCharset) {
         this.ftpPath = ftpPath;
         this.sapiPath = sapiPath;
         this.delimiter = StringUtils.defaultIfEmpty(delimiter, ",");
@@ -76,6 +79,8 @@ public class FtpMapping {
         }
         this.pkey = pkey;
         this.prefix = prefix;
+        
+        this.srcCharset = StringUtils.defaultIfEmpty(srcCharset,"");
 
     }
 
@@ -198,7 +203,14 @@ public class FtpMapping {
     	return EnumUtils.getEnum(Compression.class, compression);
     }
 
-    
+    public String getSrcCharsetString() {
+		return srcCharset;
+	}
+
+    public Charset getSrcCharset() {
+    	return Charset.forName(srcCharset);
+    }
+
 	@Override
 	public String toString() {
 		return "FtpMapping [ftpPath=" + ftpPath + ", prefix=" + prefix + ", extension=" + extension + ", compression="
