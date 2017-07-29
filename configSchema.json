@@ -706,7 +706,7 @@
 					},
 					"srcCharset": {
 						"type": "string",
-						"propertyOrder": 2500,
+						"propertyOrder": 2600,
 						"title": "File charset.",
 						"description": "Determines the source file charset. All files will be converted to UTF-8.",
 						"enum": [
@@ -824,7 +824,8 @@
 					"incremental",
 					"pkey",
 					"delimiter",
-					"enclosure"
+					"enclosure",
+					"srcCharset"
 				]
 			}
 		}
