@@ -138,7 +138,7 @@ public class FtpMapping {
     public String getEnclosure() {
         //default if null
         if (enclosure == null) {
-            return "\"";
+            return "";
         }
 
         return String.valueOf(getEnclosureChar());
@@ -146,7 +146,7 @@ public class FtpMapping {
     public char getEnclosureChar() {
     	//default if null
     	if (enclosure == null) {
-    		return '"';
+    		return Character.MIN_VALUE;
     	}  	
     	return StringEscapeUtils.unescapeJava(enclosure).charAt(0);
     }
