@@ -54,7 +54,7 @@ public class FtpMapping {
         this.ftpPath = ftpPath;
         this.sapiPath = sapiPath;
         this.delimiter = StringUtils.defaultIfEmpty(delimiter, ",");
-        this.enclosure = StringUtils.defaultIfEmpty(enclosure, "\"");
+        this.enclosure = StringUtils.defaultIfEmpty(enclosure, "");
         this.compression = StringUtils.defaultIfEmpty(compression, Compression.NONE.name());
 
         if (isFolder != null) {
@@ -137,7 +137,7 @@ public class FtpMapping {
 
     public String getEnclosure() {
         //default if null
-        if (enclosure == null) {
+        if (StringUtils.isBlank(enclosure)) {
             return "";
         }
 
@@ -145,7 +145,7 @@ public class FtpMapping {
     }
     public char getEnclosureChar() {
     	//default if null
-    	if (enclosure == null) {
+    	if (StringUtils.isBlank(enclosure)) {
     		return Character.MIN_VALUE;
     	}  	
     	return StringEscapeUtils.unescapeJava(enclosure).charAt(0);
