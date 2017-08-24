@@ -8,34 +8,29 @@
 	<packaging>jar</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 		<jackson.version>2.7.4</jackson.version>
 	</properties>
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.0.0</version>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<mainClass>keboola.ftp.extractor.Main</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
+		<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
 				<executions>
 					<execution>
-						<phase>package</phase>
 						<goals>
-							<goal>single</goal>
+							<goal>java</goal>
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<arguments>
+						<argument>-Djava.util.logging.config.file="logging.properties"</argument>
+					</arguments>
+					<mainClass>keboola.ftp.extractor.Main</mainClass>
+				</configuration>
 			</plugin>
 		</plugins>
 
