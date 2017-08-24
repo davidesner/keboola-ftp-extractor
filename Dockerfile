@@ -18,6 +18,12 @@ ENV MAVEN_HOME /usr/share/maven
 ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 # END maven
 
+MAINTAINER David Esner <esnerda@gmail.com>
+
+ENV APP_VERSION 1.1.0
+# install git
+RUN apk add --no-cache git
+
 # set switch that enables correct JVM memory allocation in containers
 ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
 ENV MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
