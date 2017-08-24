@@ -28,10 +28,7 @@ RUN apk add --no-cache git
 ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
 ENV MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
 
-MAINTAINER David Esner <esnerda@gmail.com>
-
-ENV APP_VERSION 1.2.4
- WORKDIR /home
+WORKDIR /home
 RUN git clone https://github.com/davidesner/keboola-ftp-extractor.git ./
 
 RUN mvn compile
