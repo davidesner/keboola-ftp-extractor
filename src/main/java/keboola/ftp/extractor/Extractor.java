@@ -61,7 +61,7 @@ public class Extractor {
 		// get user mappings
 		KBCParameters confParams = config.getParams();
 		List<FtpMapping> mappings = confParams.getMappings();
-
+		printEnvStats();
 		initFtpClient();
 
 		List<VisitedFolder> visitedFoldersCurrent = new ArrayList<VisitedFolder>();
@@ -70,6 +70,7 @@ public class Extractor {
 		Date lastRun = null;
 		Date currDate;
 		/* Download all files and generate manifests */
+		
 		log.info("Downloading files...");
 		int count = 0;
 		try {
@@ -123,6 +124,21 @@ public class Extractor {
 	}
 
 	/* - Ftp processing methods */
+
+	private static void printEnvStats() {
+		// Get current size of heap in bytes
+		long heapSize = Runtime.getRuntime().totalMemory(); 
+
+		// Get maximum size of heap in bytes. The heap cannot grow beyond this size.// Any attempt will result in an OutOfMemoryException.
+		long heapMaxSize = Runtime.getRuntime().maxMemory();
+
+		 // Get amount of free memory within the heap in bytes. This size will increase // after garbage collection and decrease as new objects are created.
+		long heapFreeSize = Runtime.getRuntime().freeMemory();
+		
+		log.info("Initial Heap size (MB): " + heapSize/1000000);
+		log.info("Max Heap size (MB): " + heapMaxSize/1000000);
+		log.info("Initial free memory (MB): " + heapFreeSize/1000000);		
+	}
 
 	private static Map<String, Date> retrieveFiles(FtpMapping mapping, Date lastRun) throws FtpException {
 		if (mapping.isFolder()) {
