@@ -106,7 +106,7 @@ public class Extractor {
 			try {
 				ftpClient.disconnect();
 			} catch (IOException ex) {
-				log.error(ex);
+				log.error(ex.getMessage(), ex);
 			}
 		}
 
@@ -368,12 +368,12 @@ public class Extractor {
 			ftpClient.connect();
 
 		} catch (FtpException ex) {
-			log.error(ex);
+			log.error(ex.getMessage(), ex);
 			System.err.println("Failed to create FTP client. " + ex.getMessage());
 			// ex.printStackTrace();
 			System.exit(ex.getSeverity());
 		} catch (IOException ex) {
-			log.error(ex);
+			log.error(ex.getMessage(), ex);
 			System.err.println("Failed to create FTP client. " + ex.getMessage());
 			// ex.printStackTrace();
 			System.exit(1);
