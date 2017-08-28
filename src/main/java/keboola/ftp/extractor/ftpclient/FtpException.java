@@ -11,12 +11,16 @@ import keboola.ftp.extractor.KBCException;
  */
 public class FtpException extends KBCException {
 
-    public FtpException(String message) {
-        super(message);
+    public FtpException(String message, Exception cause) {
+        super(message, 1, cause);
     }
 
     public FtpException(String message, int severity) {
-        super(message, severity);
+        super(message, severity, null);
+    }
+
+    public FtpException(String message, int severity, Exception cause) {
+    	super(message, severity, cause);
     }
 
 }

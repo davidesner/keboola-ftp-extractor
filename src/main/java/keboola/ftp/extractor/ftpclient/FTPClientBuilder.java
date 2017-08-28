@@ -72,7 +72,7 @@ public class FTPClientBuilder {
             case SFTP:
                 return new SFTPClient(user, pass, url, port);
             default:
-                throw new FtpException("Unsupported protocol!");
+                throw new FtpException("Unsupported protocol!", null);
         }
     }
 

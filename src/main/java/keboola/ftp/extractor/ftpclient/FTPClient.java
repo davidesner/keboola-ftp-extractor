@@ -70,7 +70,7 @@ public class FTPClient implements IFTPClient {
 				setUpDefaultFtpClient(port);
 			}
 		} catch (GeneralSecurityException | IOException e) {
-			throw new FtpException(e.getMessage(), 1);
+			throw new FtpException(e.getMessage(), 1, e);
 		}
 		//set buffer size
         this.ftpClient.setBufferSize(1024 * 1024);
@@ -207,7 +207,7 @@ public class FTPClient implements IFTPClient {
         try {
             reconnectIfNeeded();
         } catch (IOException ex) {
-            throw new FtpException("Error connecting to ftp server. " + ex.getMessage());
+            throw new FtpException("Error connecting to ftp server. " + ex.getMessage(), ex);
         }
         try {
 
@@ -215,7 +215,7 @@ public class FTPClient implements IFTPClient {
             ftpClient.changeWorkingDirectory(remoteFolder);
             int returnCode = ftpClient.getReplyCode();
             if (returnCode == 550) {
-                throw new FtpException("Remote folder: '" + remoteFolder + "' does not exist or is not a folder!");
+                throw new FtpException("Remote folder: '" + remoteFolder + "' does not exist or is not a folder!", null);
             }
 
             //get list of files to download
@@ -227,7 +227,7 @@ public class FTPClient implements IFTPClient {
             }
 
         } catch (IOException ex) {
-            throw new FtpException("Error downloading files from folder: " + remoteFolder + ". " + ex.getMessage());
+            throw new FtpException("Error downloading files from folder: " + remoteFolder + ". " + ex.getMessage(), ex);
         }
         return downloadedFiles;
     }
@@ -275,13 +275,13 @@ public class FTPClient implements IFTPClient {
             }
             int returnCode = ftpClient.getReplyCode();
             if (returnCode == 550) {
-                throw new FtpException("Remote folder does not exist!");
+                throw new FtpException("Remote folder does not exist!", null);
             }
 
             fos = new FileOutputStream(localFilePath + File.separator + fileName);
 
             if (ftpClient.changeWorkingDirectory(fileName)) {
-                throw new FtpException("Unable to download this file: " + fileName + ". It is a directory.");
+                throw new FtpException("Unable to download this file: " + fileName + ". It is a directory.", null);
             }
             FTPFile[] files = ftpClient.listFiles(fileName);
             if (files == null || files.length == 0) {
@@ -290,7 +290,7 @@ public class FTPClient implements IFTPClient {
             this.ftpClient.retrieveFile(fileName, fos);
             downloadedFiles.put(fileName, files[0].getTimestamp().getTime());
         } catch (IOException ex) {
-            throw new FtpException("Error downloading file: " + fileName + ". " + ex.getMessage());
+            throw new FtpException("Error downloading file: " + fileName + ". " + ex.getMessage(), ex);
 
         } finally {
             if (fos != null) {

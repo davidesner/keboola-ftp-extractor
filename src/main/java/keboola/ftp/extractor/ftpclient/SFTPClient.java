@@ -1,15 +1,7 @@
 package keboola.ftp.extractor.ftpclient;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.ChannelSftp.LsEntry;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpATTRS;
-import com.jcraft.jsch.SftpException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,10 +11,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpATTRS;
+import com.jcraft.jsch.SftpException;
+
 import keboola.ftp.extractor.ftpclient.filters.SFTPfilter;
 import keboola.ftp.extractor.ftpclient.filters.SftpFilters;
 
@@ -86,7 +85,7 @@ public class SFTPClient implements IFTPClient {
             sftpChannel.connect();
             return true;
         } catch (Exception ex) {
-            throw new IOException("Unable to connect to sftp repository. " + ex.getMessage());
+            throw new IOException("Unable to connect to sftp repository. " + ex.getMessage(), ex);
 
         }
     }
@@ -154,7 +153,7 @@ public class SFTPClient implements IFTPClient {
         try {
             reconnectIfNeeded();
         } catch (Exception ex) {
-            throw new FtpException("Unable to reconnect to sftp repository. " + ex.getMessage());
+            throw new FtpException("Unable to reconnect to sftp repository. " + ex.getMessage(), ex);
         }
         try {
             if (remoteFolder != null) {
@@ -164,10 +163,10 @@ public class SFTPClient implements IFTPClient {
             //check if it is a directory
             SftpATTRS attrs = sftpChannel.lstat(CURRENT_FOLDER_PATH);
             if (!attrs.isDir()) {
-                throw new FtpException("Remote folder: '" + remoteFolder + "' does not exist or is not a folder!");
+                throw new FtpException("Remote folder: '" + remoteFolder + "' does not exist or is not a folder!",null);
             }
         } catch (SftpException ex) {
-            throw new FtpException("Unable to list the path. " + ex.getMessage());
+            throw new FtpException("Unable to list the path. " + ex.getMessage(),ex);
         }
 
         try {
@@ -181,7 +180,7 @@ public class SFTPClient implements IFTPClient {
             }
 
         } catch (Exception ex) {
-            throw new FtpException("Error downloading files from folder: " + remoteFolder + ". " + ex.getMessage());
+            throw new FtpException("Error downloading files from folder: " + remoteFolder + ". " + ex.getMessage(), ex);
         }
         return downloadedFiles;
     }
@@ -231,12 +230,12 @@ public class SFTPClient implements IFTPClient {
                     sftpChannel.cd(remoteFolder);
                 }
             } catch (SftpException ex) {
-                throw new FtpException("Unable to list the path. " + ex.getMessage());
+                throw new FtpException("Unable to list the path. " + ex.getMessage(), ex);
             }
             //check if not directory
             SftpATTRS attrs = sftpChannel.lstat(fileName);
             if (attrs.isDir()) {
-                throw new FtpException("Unable to download this file: " + fileName + ". It is a directory.");
+                throw new FtpException("Unable to download this file: " + fileName + ". It is a directory.", null);
             }
             Date last_mod_time = new Date(attrs.getMTime() * 1000L);
 
@@ -251,7 +250,7 @@ public class SFTPClient implements IFTPClient {
 
             downloadedFiles.put(fileName, last_mod_time);
         } catch (IOException ex) {
-            throw new FtpException("Error downloading file: " + fileName + ". " + ex.getMessage());
+            throw new FtpException("Error downloading file: " + fileName + ". " + ex.getMessage(), ex);
 
         } catch (SftpException ex) {
             Logger.getLogger(SFTPClient.class.getName()).log(Level.SEVERE, null, ex);
