@@ -1,5 +1,5 @@
-# instead of maven:3.5.0-jdk-8-alpine, contained old java version
-FROM openjdk:8-jdk-alpine   
+# instead of maven:3.5.0-jdk-7-alpine, contained old java version
+FROM openjdk:7-jdk-alpine   
 RUN apk add --no-cache curl tar bash
 
 ARG MAVEN_VERSION=3.5.0
@@ -25,8 +25,8 @@ ENV APP_VERSION 1.1.0
 RUN apk add --no-cache git
 
 # set switch that enables correct JVM memory allocation in containers
-ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-ENV MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+ENV JAVA_OPTS="-Xmx512m -Xms512m"
+ENV MAVEN_OPTS="-Xmx512m -Xms512m"
 
 WORKDIR /home
 RUN git clone https://github.com/davidesner/keboola-ftp-extractor.git ./
