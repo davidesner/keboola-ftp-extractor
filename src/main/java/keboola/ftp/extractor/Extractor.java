@@ -253,7 +253,7 @@ public class Extractor {
 					file.delete();
 				}
 				//in case some files did not contain any data
-				CsvUtils.deleteEmptyFiles(files);
+				CsvUtils.deleteEmptyFiles(resultFiles);
 				fileNames.clear();
 				fileNames.add(slicedFileFolder.getName());
 				return headerCols;
