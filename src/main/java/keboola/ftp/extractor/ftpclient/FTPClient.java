@@ -211,7 +211,9 @@ public class FTPClient implements IFTPClient {
         }
         try {
 
-            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);        	
+            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);  
+            //change back to root first
+            ftpClient.changeWorkingDirectory("/");
             ftpClient.changeWorkingDirectory(remoteFolder);
             int returnCode = ftpClient.getReplyCode();
             if (returnCode == 550) {
