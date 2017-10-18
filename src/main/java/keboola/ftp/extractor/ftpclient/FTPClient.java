@@ -60,7 +60,7 @@ public class FTPClient implements IFTPClient {
 				setUptFtpsClientImplicit(port);
 				break;
 			case FTPS_EXPLICIT:
-				System.setProperty("https.protocols", "TLSv1");
+				//System.setProperty("https.protocols", "TLSv1");
 				setUptFtpsClientExplicit(port);
 				break;
 			case FTP:
