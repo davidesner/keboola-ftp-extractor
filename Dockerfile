@@ -25,8 +25,8 @@ ENV APP_VERSION 1.1.0
 RUN apk add --no-cache git
 
 # set switch that enables correct JVM memory allocation in containers
-ENV JAVA_OPTS="-Xmx512m -Xms512m  -Djdk.tls.client.protocols='TLSv1,TLSv1.1,TLSv1.2'"
-ENV MAVEN_OPTS="-Xmx512m -Xms512m -Djdk.tls.client.protocols='TLSv1,TLSv1.1,TLSv1.2'"
+ENV JAVA_OPTS='-Xmx512m -Xms512m  -Djdk.tls.client.protocols="TLSv1,TLSv1.1,TLSv1.2"'
+ENV MAVEN_OPTS='-Xmx512m -Xms512m -Djdk.tls.client.protocols="TLSv1,TLSv1.1,TLSv1.2"'
 
 WORKDIR /home
 RUN git clone https://github.com/davidesner/keboola-ftp-extractor.git ./
