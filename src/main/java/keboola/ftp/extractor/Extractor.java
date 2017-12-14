@@ -33,7 +33,6 @@ import keboola.ftp.extractor.ftpclient.IFTPClient;
 import keboola.ftp.extractor.state.JsonStateWriter;
 import keboola.ftp.extractor.state.VisitedFolder;
 import keboola.ftp.extractor.state.VisitedFoldersList;
-import keboola.ftp.extractor.utils.CsvFileMerger;
 import keboola.ftp.extractor.utils.CsvUtils;
 import keboola.ftp.extractor.utils.FileHandler;
 import keboola.ftp.extractor.utils.MergeException;
@@ -188,7 +187,7 @@ public class Extractor {
     		return;
     	}
 		try {
-			CsvFileMerger.dataStructureMatch(files, outTablesPath, mapping.getDelimiterChar(), mapping.getEnclosureChar());
+			//CsvFileMerger.dataStructureMatch(files, outTablesPath, mapping.getDelimiterChar(), mapping.getEnclosureChar());
 			convertCharset(getFilePaths(files),mapping.getSrcCharset());
 		} catch (MergeException ex) {
 			log.error("Failed to merge files. " + ex.getMessage(), ex);
