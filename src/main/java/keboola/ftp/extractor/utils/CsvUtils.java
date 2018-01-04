@@ -46,6 +46,8 @@ public class CsvUtils {
 				out.write(line);
 				out.newLine();
 			}
+			out.close();
+			fileStream.close();
 		}
 
 		csvFile.delete();
