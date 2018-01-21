@@ -694,7 +694,8 @@
 						"description": "Determines the compression type. Only archives are downloaded. This parameter overrides the 'extension' parameter.",
 						"enum": [
 							"NONE",
-							"ZIP"
+							"ZIP",
+							"GZIP"
 						],
 						"default": "NONE",
 						"options": {

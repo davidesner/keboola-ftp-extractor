@@ -3,8 +3,6 @@
 package keboola.ftp.extractor;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -15,8 +13,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import org.apache.log4j.Logger;
 
@@ -162,7 +158,7 @@ public class Extractor {
 		List<String> resultFileNames = new ArrayList<>();
 		try {
 			for (String file : files) {
-				resultFileNames.addAll(unzip(file, outTablesPath));
+				resultFileNames.addAll(unzip(mapping.getCompressionEnum(), file, outTablesPath));
 			}
 			// delete zipfiles
 			FileHandler.deleteFiles(getFilePaths(files));
@@ -259,54 +255,24 @@ public class Extractor {
 	}
 
 
-	private static List<String> unzip(String fileName, String outPath) throws Exception {
+	private static List<String> unzip(Compression compressionType, String fileName, String outPath) throws Exception {
 		byte[] buffer = new byte[1024];
 		File zipFile = new File(outPath + File.separator + fileName);
 		List<String> resultFileNames = new ArrayList<>();
-
-		ZipInputStream zis = null;
-		try {
-			// get the zip file content
-			zis = new ZipInputStream(new FileInputStream(zipFile));
-			// get the zipped file list entry
-			ZipEntry ze = zis.getNextEntry();
-
-			while (ze != null) {
-
-				File newFile = new File(outPath + File.separator + ze.getName());
-
-				log.info("file unzip : " + newFile.getAbsoluteFile());
-
-				// create all non exists folders else you will hit
-				// FileNotFoundException for compressed folder
-				new File(newFile.getParent()).mkdirs();
-
-				FileOutputStream fos = new FileOutputStream(newFile);
-
-				int len;
-				while ((len = zis.read(buffer)) > 0) {
-					fos.write(buffer, 0, len);
-				}
-
-				fos.close();
-				ze = zis.getNextEntry();
-				resultFileNames.add(newFile.getName());
-			}
-
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			try {
-				zis.closeEntry();
-				zis.close();
-			} catch (IOException e) {
-				// nn
-			}
-
+		switch (compressionType) {
+		case ZIP:
+			resultFileNames = FileHandler.decompressZipFile(outPath, zipFile);
+			break;
+		case GZIP:
+			resultFileNames = FileHandler.decompressGZip(outPath, zipFile);
+			break;
+		default:
+			throw new Exception("Unsupported compression type!");
 		}
 		return resultFileNames;
-
 	}
+
+	
 
 	/* -- internal Kbc methods -- */
 

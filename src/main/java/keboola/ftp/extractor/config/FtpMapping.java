@@ -38,7 +38,7 @@ public class FtpMapping {
     private String compression;
 
     public static enum Compression {
-    	NONE(""), ZIP("zip");
+    	NONE(""), ZIP("zip"), GZIP("gz");
     	public final String extension;
     	
     	Compression(String extension) {
