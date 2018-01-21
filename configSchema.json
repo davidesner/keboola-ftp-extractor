@@ -815,7 +815,6 @@
 						"title": "CSV Enclosure",
 						"description": "Enclosure for values used in remote CSV files",
 						"default": "\""
-					}
 					},
 					"sinceLast": {
 						"propertyOrder": 9500,
