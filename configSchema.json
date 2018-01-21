@@ -701,7 +701,8 @@
 						"options": {
 							"enum_titles": [
 								"None",
-								"Zip"
+								"Zip",
+								"GZip"
 							]
 						}
 					},
