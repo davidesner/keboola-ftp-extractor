@@ -841,6 +841,7 @@
 					"compression",
 					"isFolder",
 					"incremental",
+					"sinceLast",
 					"pkey",
 					"delimiter",
 					"enclosure",
