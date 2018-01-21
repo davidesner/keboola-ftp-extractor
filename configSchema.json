@@ -816,6 +816,24 @@
 						"description": "Enclosure for values used in remote CSV files",
 						"default": "\""
 					}
+					},
+					"sinceLast": {
+						"propertyOrder": 9500,
+						"type": "number",
+						"title": "Continue since last run",
+						"description": "Flag whether to download only files that has changed since the last run. If set to No all matching files in the repository will be downloaded.",
+						"enum": [
+							1,
+							0
+						],
+						"default": 1,
+						"options": {
+							"enum_titles": [
+								"Yes",
+								"No"
+							]
+						}
+					}
 				},
 				"required": [
 					"ftpPath",

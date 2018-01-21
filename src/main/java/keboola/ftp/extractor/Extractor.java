@@ -277,7 +277,7 @@ public class Extractor {
 	/* -- internal Kbc methods -- */
 
 	private static Date getLastRun(FtpMapping mapping, VisitedFoldersList visitedFolders) {
-		if (visitedFolders == null) {
+		if (visitedFolders == null || mapping.getSinceLast() == 0) {
 			return null;
 		}
 		VisitedFolder vf = visitedFolders.getFolderByPath(mapping.getFtpPath());

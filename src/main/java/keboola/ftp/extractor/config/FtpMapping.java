@@ -26,6 +26,9 @@ public class FtpMapping {
 
 //default 1
     private final Integer incremental;
+
+//default 1
+    private final Integer sinceLast;
 //required if incremental = 1
     private final String[] pkey;
     private String prefix;
@@ -47,7 +50,7 @@ public class FtpMapping {
     }
 
     public FtpMapping(@JsonProperty("ftpPath") String ftpPath, @JsonProperty("sapiPath") String sapiPath,
-            @JsonProperty("isFolder") Integer isFolder, @JsonProperty("incremental") Integer incremental,
+            @JsonProperty("isFolder") Integer isFolder, @JsonProperty("incremental") Integer incremental, @JsonProperty("sinceLast") Integer sinceLast,
             @JsonProperty("pkey") String[] pkey, @JsonProperty("prefix") String prefix, @JsonProperty("delimiter") String delimiter,
             @JsonProperty("enclosure") String enclosure, @JsonProperty("extension") String extension, @JsonProperty("compression") String compression,
             @JsonProperty("srcCharset") String srcCharset) {
@@ -76,6 +79,11 @@ public class FtpMapping {
             this.incremental = incremental;
         } else {
             this.incremental = 1;
+        }
+        if (sinceLast != null) {
+        	this.sinceLast = sinceLast;
+        } else {
+        	this.sinceLast = 1;
         }
         this.pkey = pkey;
         this.prefix = prefix;
@@ -210,6 +218,10 @@ public class FtpMapping {
     public Charset getSrcCharset() {
     	return Charset.forName(srcCharset);
     }
+
+	public Integer getSinceLast() {
+		return sinceLast;
+	}
 
 	@Override
 	public String toString() {
