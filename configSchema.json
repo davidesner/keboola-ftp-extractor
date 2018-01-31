@@ -20,7 +20,8 @@
 		},
 		"#pass": {
 			"type": "string",
-			"title": "FTP password"
+			"title": "FTP password",
+			"format": "password"
 		},
 		"protocol": {
 			"type": "string",

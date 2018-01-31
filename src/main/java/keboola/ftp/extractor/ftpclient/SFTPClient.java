@@ -59,6 +59,8 @@ public class SFTPClient implements IFTPClient {
         ftpClient = new JSch();
         if (port == null) {
             this.port = DEFAULT_PORT;
+        } else {
+        	this.port = port;
         }
 
     }
