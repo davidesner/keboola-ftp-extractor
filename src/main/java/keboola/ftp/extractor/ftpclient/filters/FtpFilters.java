@@ -5,8 +5,8 @@ package keboola.ftp.extractor.ftpclient.filters;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Map;
 import java.util.TimeZone;
+
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
 
@@ -17,6 +17,8 @@ import org.apache.commons.net.ftp.FTPFileFilter;
  * @created 2016
  */
 public class FtpFilters {
+	
+	private static final String WILDCARD_CHAR = "*";
 
     /**
      * Accepts all (non-null) FTPFile files entries.
@@ -136,6 +138,10 @@ public class FtpFilters {
     }
 
     private static boolean hasExtension(String filename, String extension) {
+    	//ignore extension if wildcard present
+    	if (WILDCARD_CHAR.equals(extension)) {
+    		return true;
+    	}
         String ex = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
         return ex.toLowerCase().equals(extension);
     }

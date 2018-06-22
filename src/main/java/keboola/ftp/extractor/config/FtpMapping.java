@@ -65,8 +65,8 @@ public class FtpMapping {
         } else {
             this.isFolder = 1;
         }
-//set extension, set to default csv, if isFolder is not 1
-        if (extension != null && this.isFolder == 1) {
+//set extension, set to default csv if empty
+        if (!StringUtils.isEmpty(extension)) {
             this.extension = extension;
         } else {
             this.extension = "csv";

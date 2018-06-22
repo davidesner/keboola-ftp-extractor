@@ -38,7 +38,7 @@ The component newly allows to retrieve archived (ZIP) files. You can download a 
     - **Download folder or file** – (DEFAULT FOLDER) indicator whether to
 		download a single file or the whole folder 
     - **Compression** - (DEFAULT `None`) Specifies whether the retrieved files are archives and its' compression type. For more information see Compression section above.
-    - **extension** - (DEFAULT `csv`) optional parameter specifying custom extension of files to retrieve. i.e. `txt`. If not specified all files with `csv` extension will be downloaded by default.
+    - **extension** - (DEFAULT `csv`) optional parameter specifying custom extension of files to retrieve. i.e. `txt`. If not specified all files with `csv` extension will be downloaded by default. **NOTE:** Wildcard `*` may be specified to accept all extensions or for files with none.
     - **Storage upload mode** – (DEFAULT INCREMENTAL) specifies whether
 		to upload incrementally. If set to INCREMENTAL, the pkey must be
 		specified. 		 

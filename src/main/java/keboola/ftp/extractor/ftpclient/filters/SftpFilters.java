@@ -2,12 +2,12 @@
  */
 package keboola.ftp.extractor.ftpclient.filters;
 
-import com.jcraft.jsch.ChannelSftp.LsEntry;
-import com.jcraft.jsch.SftpATTRS;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.TimeZone;
+
+import com.jcraft.jsch.ChannelSftp.LsEntry;
+import com.jcraft.jsch.SftpATTRS;
 
 /**
  *
@@ -15,6 +15,8 @@ import java.util.TimeZone;
  * created 2016
  */
 public class SftpFilters {
+
+	private static final String WILDCARD_CHAR = "*";
 
     /**
      * Accepts all (non-null) LsEntry csv files entries.
@@ -105,6 +107,10 @@ public class SftpFilters {
     }
 
     private static boolean hasExtension(String filename, String extension) {
+    	//ignore extension if wildcard present
+    	if (WILDCARD_CHAR.equals(extension)) {
+    		return true;
+    	}
         String ex = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
         return ex.toLowerCase().equals(extension);
     }
