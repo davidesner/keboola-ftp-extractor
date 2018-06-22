@@ -765,7 +765,7 @@
 						"propertyOrder": 4000,
 						"type": "string",
 						"title": "Extension",
-						"description": "Extension of files to retrieve (e.g. txt, csv).",
+						"description": "Extension of files to retrieve (e.g. txt, csv). Wildcard `*` may be specified to accept all extensions or files with none. If empty, 'csv' is used by default.",
 						"default": "csv"
 					},
 					"prefix": {
