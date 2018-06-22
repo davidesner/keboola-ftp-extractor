@@ -160,10 +160,12 @@ public class SFTPClient implements IFTPClient {
         try {
             if (remoteFolder != null) {
                 sftpChannel.cd(remoteFolder);
+            } else {
+            	remoteFolder = CURRENT_FOLDER_PATH;
             }
 
             //check if it is a directory
-            SftpATTRS attrs = sftpChannel.lstat(CURRENT_FOLDER_PATH);
+            SftpATTRS attrs = sftpChannel.lstat(remoteFolder);
             if (!attrs.isDir()) {
                 throw new FtpException("Remote folder: '" + remoteFolder + "' does not exist or is not a folder!",null);
             }
@@ -174,7 +176,7 @@ public class SFTPClient implements IFTPClient {
         try {
 
             //get list of files to download
-            List<String> fileNames = getFileNamesInCurrentFolderByFilter(filter);
+            List<String> fileNames = getFileNamesInCurrentFolderByFilter(filter, remoteFolder);
 
             for (String file : fileNames) {
                 Map<String, Date> res = downloadFile(remoteFolder, file, localFolderPath);
@@ -269,9 +271,9 @@ public class SFTPClient implements IFTPClient {
 
     }
 
-    protected List<String> getFileNamesInCurrentFolderByFilter(SFTPfilter filter) throws SftpException {
+    protected List<String> getFileNamesInCurrentFolderByFilter(SFTPfilter filter, String folderPath) throws SftpException {
         List<String> resultFiles = new ArrayList<String>();
-        Vector<LsEntry> entries = sftpChannel.ls(CURRENT_FOLDER_PATH);
+        Vector<LsEntry> entries = sftpChannel.ls(folderPath);
         for (LsEntry entry : entries) {
             if (filter.accept(entry)) {
                 resultFiles.add(entry.getFilename());

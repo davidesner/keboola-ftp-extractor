@@ -41,6 +41,7 @@ public class FTPClient implements IFTPClient {
 
 	public static final int DEFAUTL_SSL_PORT = 990;
 	private static final int MAX_RETRIES = 5;
+	private boolean isLoggedOn;
     private String userName;
     private String pass;
     private String url;
@@ -128,48 +129,50 @@ public class FTPClient implements IFTPClient {
      * @throws SocketException
      * @throws IOException
      */
-    public boolean connect() throws SocketException, IOException {
-    	Callable<Boolean> callable = new Callable<Boolean>() {
-    	    public Boolean call() throws Exception {
-    	    	if (ftpClient.isConnected()) {
-    	    		return true;
-    	    	}
-    	    	ftpClient.connect(url, port);
-    	    	//login to server
-    	    	if (!ftpClient.login(userName, pass)) {
-    	    		ftpClient.logout();
-    	    		return false;
-    	    	}
-    	    	int reply = ftpClient.getReplyCode();
-    	    	
-    	    	if (!FTPReply.isPositiveCompletion(reply)) {
-    	    		ftpClient.disconnect();
-    	    		return false;
-    	    	}
-    	    	if (ftpClient instanceof FTPSClient){
-    	    		setFtpSecurity();
-    	    	}
-    	    	//passive mode
-    	    	ftpClient.enterLocalPassiveMode();
-    	    	return true;
-    	    }
-    	};
+	public boolean connect() throws SocketException, IOException {
+		Callable<Boolean> callable = new Callable<Boolean>() {
+			public Boolean call() throws Exception {
+				if (!ftpClient.isConnected()) {
+					ftpClient.connect(url, port);
+				}
 
-    	Retryer<Boolean> retryer = RetryerBuilder.<Boolean>newBuilder()
-    	        .retryIfResult(Predicates.<Boolean>isNull())
-    	        .retryIfExceptionOfType(IOException.class)
-    	        .retryIfRuntimeException()
-    	        .withWaitStrategy(WaitStrategies.exponentialWait())
-    	        .withStopStrategy(StopStrategies.stopAfterAttempt(MAX_RETRIES))
-    	        .build();
-    	try {
-    	    return retryer.call(callable);
-    	} catch (RetryException e) {
-    	    throw new IOException("Failed to connect to the client. After " +  MAX_RETRIES + " attempts.", e);
-    	} catch (ExecutionException e) {
-    		throw new IOException("Failed to connect to the client.", e);
-    	}
-    }
+				// login to server
+				if (!isLoggedOn()) {
+					setLoggedOn(ftpClient.login(userName, pass));
+				}
+
+				//throw exception if login failed
+				if (!isLoggedOn()) {
+					throw new FtpException("Login failed, check your credentials!",1);
+				}
+
+				int reply = ftpClient.getReplyCode();
+
+				if (!FTPReply.isPositiveCompletion(reply)) {
+					ftpClient.disconnect();
+					return false;
+				}
+				if (ftpClient instanceof FTPSClient) {
+					setFtpSecurity();
+				}
+				// passive mode
+				ftpClient.enterLocalPassiveMode();
+				return true;
+			}
+		};
+
+		Retryer<Boolean> retryer = RetryerBuilder.<Boolean> newBuilder().retryIfResult(Predicates.<Boolean> isNull())
+				.retryIfExceptionOfType(IOException.class).retryIfRuntimeException()
+				.withWaitStrategy(WaitStrategies.exponentialWait())
+				.withStopStrategy(StopStrategies.stopAfterAttempt(MAX_RETRIES)).build();
+		try {
+			return retryer.call(callable);
+		} catch (RetryException e) {
+			throw new IOException("Failed to connect to the client. " + e.getMessage(), e);
+		} catch (ExecutionException e) {
+			throw new IOException("Failed to connect to the client: " + e.getMessage(), e);
+		}
+	}
     
     
     private void setFtpSecurity() throws SSLException, IOException {
@@ -375,4 +378,13 @@ public class FTPClient implements IFTPClient {
 		return callable;
 
 	}
+
+	public boolean isLoggedOn() {
+		return isLoggedOn;
+	}
+
+	public void setLoggedOn(boolean isLoggedOn) {
+		this.isLoggedOn = isLoggedOn;
+	}
+	
 }
