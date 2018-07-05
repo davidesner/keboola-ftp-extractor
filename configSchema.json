@@ -1,18 +1,22 @@
 {
-	"title": "FTP extractor configuration",
 	"type": "object",
+	"title": "(S)FTP extractor configuration",
+	"required": [
+		"ftpUrl",
+		"port",
+		"user",
+		"#pass",
+		"protocol",
+		"timezone",
+		"mappings"
+	],
 	"properties": {
-		"ftpUrl": {
-			"type": "string",
-			"title": "FTP host URL"
-		},
 		"port": {
 			"type": [
 				"null",
 				"integer"
 			],
-			"title": "FTP host port",
-			"default": null
+			"title": "FTP host port"
 		},
 		"user": {
 			"type": "string",
@@ -23,20 +27,213 @@
 			"title": "FTP password",
 			"format": "password"
 		},
-		"protocol": {
+		"ftpUrl": {
 			"type": "string",
-			"title": "FTP protocol",
+			"title": "FTP host URL"
+		},
+		"mappings": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"title": "Mapping",
+				"required": [
+					"ftpPath",
+					"sapiPath",
+					"extension",
+					"compression",
+					"isFolder",
+					"incremental",
+					"sinceLast",
+					"pkey",
+					"delimiter",
+					"enclosure",
+					"srcCharset"
+				],
+				"properties": {
+					"pkey": {
+						"type": "array",
+						"items": {
+							"type": "string",
+							"title": "Column name"
+						},
+						"title": "Primary Key",
+						"description": "Names of primary key columns.",
+						"uniqueItems": true,
+						"propertyOrder": 7000
+					},
+					"prefix": {
+						"type": "string",
+						"title": "Filename prefix (optional)",
+						"description": "Download only files starting with specified prefix.",
+						"propertyOrder": 5000
+					},
+					"ftpPath": {
+						"type": "string",
+						"title": "Remote Path",
+						"description": "e.g. /myfolder/mysubfolder",
+						"propertyOrder": 1000
+					},
+					"isFolder": {
+						"enum": [
+							1,
+							0
+						],
+						"type": "number",
+						"title": "Download folder or file",
+						"default": 1,
+						"options": {
+							"enum_titles": [
+								"Folder",
+								"Single file"
+							]
+						},
+						"description": "The specified path is a single file or a whole folder",
+						"propertyOrder": 2000
+					},
+					"sapiPath": {
+						"type": "string",
+						"title": "Table name",
+						"description": "Storage bucket and table where the result will be uploaded (e.g. out.c-main.mytable).",
+						"propertyOrder": 3000
+					},
+					"delimiter": {
+						"type": "string",
+						"title": "CSV Delimiter",
+						"default": ",",
+						"description": "Delimiter used in remote CSV files",
+						"propertyOrder": 8000
+					},
+					"enclosure": {
+						"type": "string",
+						"title": "CSV Enclosure",
+						"default": "\"",
+						"description": "Enclosure for values used in remote CSV files",
+						"propertyOrder": 9000
+					},
+					"extension": {
+						"type": "string",
+						"title": "Extension",
+						"default": "csv",
+						"description": "Extension of files to retrieve (e.g. txt, csv).",
+						"propertyOrder": 4000
+					},
+					"sinceLast": {
+						"enum": [
+							1,
+							0
+						],
+						"type": "number",
+						"title": "Continue since last run",
+						"default": 1,
+						"options": {
+							"enum_titles": [
+								"Yes",
+								"No"
+							]
+						},
+						"description": "Flag whether to download only files that has changed since the last run. If set to No all matching files in the repository will be downloaded.",
+						"propertyOrder": 9500
+					},
+					"srcCharset": {
+						"enum": [
+							"IBM00858",
+							"IBM437",
+							"IBM775",
+							"IBM850",
+							"IBM852",
+							"IBM855",
+							"IBM857",
+							"IBM862",
+							"IBM866",
+							"ISO-8859-1",
+							"ISO-8859-2",
+							"ISO-8859-4",
+							"ISO-8859-5",
+							"ISO-8859-7",
+							"ISO-8859-9",
+							"ISO-8859-13",
+							"ISO-8859-15",
+							"KOI8-R",
+							"KOI8-U",
+							"US-ASCII",
+							"UTF-8",
+							"UTF-16",
+							"UTF-16BE",
+							"UTF-16LE",
+							"UTF-32",
+							"UTF-32BE",
+							"UTF-32LE",
+							"x-UTF-32BE-BOM",
+							"x-UTF-32LE-BOM",
+							"windows-1250",
+							"windows-1251",
+							"windows-1252",
+							"windows-1253",
+							"windows-1254",
+							"windows-1257",
+							"Not available",
+							"x-IBM737",
+							"x-IBM874",
+							"x-UTF-16LE-BOM"
+						],
+						"type": "string",
+						"title": "File charset.",
+						"default": "UTF-8",
+						"description": "Determines the source file charset. All files will be converted to UTF-8.",
+						"propertyOrder": 2600
+					},
+					"compression": {
+						"enum": [
+							"NONE",
+							"ZIP",
+							"GZIP"
+						],
+						"type": "string",
+						"title": "File compression",
+						"default": "NONE",
+						"options": {
+							"enum_titles": [
+								"None",
+								"Zip",
+								"GZip"
+							]
+						},
+						"description": "Determines the compression type. Only archives are downloaded. This parameter overrides the 'extension' parameter.",
+						"propertyOrder": 2500
+					},
+					"incremental": {
+						"enum": [
+							0,
+							1
+						],
+						"type": "number",
+						"title": "Storage upload mode",
+						"default": 1,
+						"options": {
+							"enum_titles": [
+								"Full",
+								"Incremental"
+							]
+						},
+						"description": "Incremental upload will append data to existing tables. Full upload will replace the contents of target table.",
+						"propertyOrder": 6000
+					}
+				}
+			},
+			"title": "Files/Folders to download"
+		},
+		"protocol": {
 			"enum": [
 				"FTP",
 				"SFTP",
 				"FTPS_IMPLICIT",
 				"FTPS_EXPLICIT"
 			],
+			"type": "string",
+			"title": "FTP protocol",
 			"default": "FTP"
 		},
 		"timezone": {
-			"type": "string",
-			"title": "FTP host timezone",
 			"enum": [
 				"Africa/Abidjan",
 				"Africa/Accra",
@@ -656,208 +853,9 @@
 				"SST",
 				"VST"
 			],
+			"type": "string",
+			"title": "FTP host timezone",
 			"default": "Europe/Prague"
-		},
-		"mappings": {
-			"type": "array",
-			"title": "Files/Folders to download",
-			"items": {
-				"type": "object",
-				"title": "Mapping",
-				"properties": {
-					"ftpPath": {
-						"type": "string",
-						"title": "Remote Path",
-						"propertyOrder": 1000,
-						"description": "e.g. /myfolder/mysubfolder"
-					},
-					"isFolder": {
-						"type": "number",
-						"propertyOrder": 2000,
-						"title": "Download folder or file",
-						"description": "The specified path is a single file or a whole folder",
-						"enum": [
-							1,
-							0
-						],
-						"default": 1,
-						"options": {
-							"enum_titles": [
-								"Folder",
-								"Single file"
-							]
-						}
-					},
-					"compression": {
-						"type": "string",
-						"propertyOrder": 2500,
-						"title": "File compression",
-						"description": "Determines the compression type. Only archives are downloaded. This parameter overrides the 'extension' parameter.",
-						"enum": [
-							"NONE",
-							"ZIP",
-							"GZIP"
-						],
-						"default": "NONE",
-						"options": {
-							"enum_titles": [
-								"None",
-								"Zip",
-								"GZip"
-							]
-						}
-					},
-					"srcCharset": {
-						"type": "string",
-						"propertyOrder": 2600,
-						"title": "File charset.",
-						"description": "Determines the source file charset. All files will be converted to UTF-8.",
-						"enum": [
-							"IBM00858",
-							"IBM437",
-							"IBM775",
-							"IBM850",
-							"IBM852",
-							"IBM855",
-							"IBM857",
-							"IBM862",
-							"IBM866",
-							"ISO-8859-1",
-							"ISO-8859-2",
-							"ISO-8859-4",
-							"ISO-8859-5",
-							"ISO-8859-7",
-							"ISO-8859-9",
-							"ISO-8859-13",
-							"ISO-8859-15",
-							"KOI8-R",
-							"KOI8-U",
-							"US-ASCII",
-							"UTF-8",
-							"UTF-16",
-							"UTF-16BE",
-							"UTF-16LE",
-							"UTF-32",
-							"UTF-32BE",
-							"UTF-32LE",
-							"x-UTF-32BE-BOM",
-							"x-UTF-32LE-BOM",
-							"windows-1250",
-							"windows-1251",
-							"windows-1252",
-							"windows-1253",
-							"windows-1254",
-							"windows-1257",
-							"Not available",
-							"x-IBM737",
-							"x-IBM874",
-							"x-UTF-16LE-BOM"
-						],
-						"default": "UTF-8"
-					},
-					"sapiPath": {
-						"propertyOrder": 3000,
-						"type": "string",
-						"title": "Table name",
-						"description": "Storage bucket and table where the result will be uploaded (e.g. out.c-main.mytable)."
-					},
-					"extension": {
-						"propertyOrder": 4000,
-						"type": "string",
-						"title": "Extension",
-						"description": "Extension of files to retrieve (e.g. txt, csv). Wildcard `*` may be specified to accept all extensions or files with none. If empty, 'csv' is used by default.",
-						"default": "csv"
-					},
-					"prefix": {
-						"propertyOrder": 5000,
-						"type": "string",
-						"title": "Filename prefix (optional)",
-						"description": "Download only files starting with specified prefix."
-					},
-					"incremental": {
-						"propertyOrder": 6000,
-						"title": "Storage upload mode",
-						"description": "Incremental upload will append data to existing tables. Full upload will replace the contents of target table.",
-						"type": "number",
-						"enum": [
-							0,
-							1
-						],
-						"default": 1,
-						"options": {
-							"enum_titles": [
-								"Full",
-								"Incremental"
-							]
-						}
-					},
-					"pkey": {
-						"propertyOrder": 7000,
-						"title": "Primary Key",
-						"type": "array",
-						"description": "Names of primary key columns.",
-						"items": {
-							"type": "string",
-							"title": "Column name"
-						},
-						"default": null,
-						"uniqueItems": true
-					},
-					"delimiter": {
-						"propertyOrder": 8000,
-						"type": "string",
-						"title": "CSV Delimiter",
-						"description": "Delimiter used in remote CSV files",
-						"default": ","
-					},
-					"enclosure": {
-						"propertyOrder": 9000,
-						"type": "string",
-						"title": "CSV Enclosure",
-						"description": "Enclosure for values used in remote CSV files",
-						"default": "\""
-					},
-					"sinceLast": {
-						"propertyOrder": 9500,
-						"type": "number",
-						"title": "Continue since last run",
-						"description": "Flag whether to download only files that has changed since the last run. If set to No all matching files in the repository will be downloaded.",
-						"enum": [
-							1,
-							0
-						],
-						"default": 1,
-						"options": {
-							"enum_titles": [
-								"Yes",
-								"No"
-							]
-						}
-					}
-				},
-				"required": [
-					"ftpPath",
-					"sapiPath",
-					"extension",
-					"compression",
-					"isFolder",
-					"incremental",
-					"sinceLast",
-					"pkey",
-					"delimiter",
-					"enclosure",
-					"srcCharset"
-				]
-			}
 		}
-	},
-	"required": [
-		"ftpUrl",
-		"port",
-		"user",
-		"#pass",
-		"protocol",
-		"timezone",
-		"mappings"
-	]
+	}
 }
