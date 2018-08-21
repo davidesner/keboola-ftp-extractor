@@ -72,6 +72,7 @@ public class FTPClient implements IFTPClient {
 				break;
 			case FTPS_EXPLICIT:
 				//System.setProperty("https.protocols", "TLSv1");
+				//System.setProperty("jdk.tls.useExtendedMasterSecret", "false");
 				setUptFtpsClientExplicit(port);
 				break;
 			case FTP:
@@ -109,7 +110,8 @@ public class FTPClient implements IFTPClient {
     }
 
     private void setUptFtpsClientExplicit(Integer port) throws GeneralSecurityException, SSLException, IOException {    	  	
-    	ftpClient = new FTPSClient("SSL",false);
+    	ftpClient = new SSLSessionReuseFTPSClient("SSL",false);
+
     	if (port == null) {
     		this.port = FTP.DEFAULT_PORT;
     	}  else {
@@ -173,6 +175,11 @@ public class FTPClient implements IFTPClient {
     
     
     private void setFtpSecurity() throws SSLException, IOException {
+    	/* Using TLS/SSL on data channel, some server enforce this.    	 * 
+    	 */
+    	// Set protection buffer size
+    	((FTPSClient) ftpClient).execPBSZ(0);
+    	// Set data channel protection to private
     	((FTPSClient) ftpClient).execPROT("P");
     }
 
@@ -360,9 +367,13 @@ public class FTPClient implements IFTPClient {
 					throw new FtpException("Remote folder: '" + remoteFolder + "' does not exist or is not a folder!",
 							null);
 				}
-
 				// get list of files to download
 				FTPFile[] files = ftpClient.listFiles(null, filter);
+				
+				if (ftpClient.getReplyCode() >= 300) {
+					throw new FtpException("Unable to list remote files! In folder: '" + remoteFolder + "'. Cause: " + ftpClient.getReplyString(),
+							null);
+				}
 
 				for (FTPFile file : files) {
 					downloadFile(ftpClient.printWorkingDirectory(), file.getName(), localFolderPath);
