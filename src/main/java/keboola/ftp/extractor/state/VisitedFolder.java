@@ -2,12 +2,13 @@
  */
 package keboola.ftp.extractor.state;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import keboola.ftp.extractor.config.FtpMapping;
-import sun.net.ftp.FtpClient;
 
 /**
  *
@@ -15,13 +16,6 @@ import sun.net.ftp.FtpClient;
  * @created 2016
  */
 public class VisitedFolder {
-
-    public VisitedFolder(String folderPath, Map<String, Date> fileMap, Date lastRun, FtpMapping lastMapping) {
-        this.folderPath = folderPath;
-        this.fileMap = fileMap;
-        this.lastRun = lastRun;
-        this.lastMapping = lastMapping;
-    }
 
     public VisitedFolder(String folderPath, Date lastRun, FtpMapping lastMapping) {
         this.folderPath = folderPath;
@@ -51,14 +45,6 @@ public class VisitedFolder {
 
     public void setFolderPath(String folderPath) {
         this.folderPath = folderPath;
-    }
-
-    public Map<String, Date> getFileMap() {
-        return fileMap;
-    }
-
-    public void setFileMap(Map<String, Date> fileMap) {
-        this.fileMap = fileMap;
     }
 
     public Date getLastRun() {

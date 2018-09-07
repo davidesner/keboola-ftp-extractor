@@ -70,6 +70,11 @@ public class Extractor {
 		int count = 0;
 		try {
 			for (FtpMapping mapping : mappings) {
+				// create historical state record for current folder
+				currDate = new Date();
+				VisitedFolder f = new VisitedFolder(mapping.getFtpPath(), currDate, mapping);
+				visitedFoldersCurrent.add(f);
+
 				// set download parameters according to previous runs
 				lastRun = getLastRun(mapping, visitedFolders);
 
@@ -80,11 +85,6 @@ public class Extractor {
 					log.warn("No files found for mapping: " + mapping.toString()); 
 					continue;
 				}
-
-				// create historical state record for current folder
-				currDate = new Date();
-				VisitedFolder f = new VisitedFolder(mapping.getFtpPath(), retrievedFiles, currDate, mapping);
-				visitedFoldersCurrent.add(f);
 
 				
 
