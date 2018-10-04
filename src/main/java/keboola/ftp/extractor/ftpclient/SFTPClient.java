@@ -168,7 +168,7 @@ public class SFTPClient implements IFTPClient {
                 throw new FtpException("Remote folder: '" + remoteFolder + "' does not exist or is not a folder!",null);
             }
         } catch (SftpException ex) {
-            throw new FtpException("Unable to list the path. " + ex.getMessage(),ex);
+            throw new FtpException("Unable to list the path: " + remoteFolder + ex.getMessage(),ex);
         }
 
         try {
@@ -198,14 +198,14 @@ public class SFTPClient implements IFTPClient {
      * @return
      * @throws FtpException
      */
-    public Map<String, Date> downloadAllNewCsvFilesByPrefix(String remoteFolder, String extension, String localFolderPath, String prefix, Date changedSince) throws FtpException {
+    public Map<String, Date> downloadAllNewCsvFilesByPrefix(String remoteFolder, String extension, String localFolderPath, String prefix, Date changedSince, boolean wildcardSupport) throws FtpException {
         //set ftp file filter accordingly
         SFTPfilter filter;
 
         if (changedSince != null) {
-            filter = SftpFilters.FILES_WITH_PREFIX_CHANGED_SINCE(changedSince, prefix, extension);
+            filter = SftpFilters.FILES_WITH_PREFIX_CHANGED_SINCE(changedSince, prefix, extension, wildcardSupport);
         } else {
-            filter = SftpFilters.JUSTFILES_WITH_PREFIX(prefix, extension);
+            filter = SftpFilters.JUSTFILES_WITH_PREFIX(prefix, extension, wildcardSupport);
         }
 
         return downloadAllFilesByFilter(remoteFolder, localFolderPath, filter);

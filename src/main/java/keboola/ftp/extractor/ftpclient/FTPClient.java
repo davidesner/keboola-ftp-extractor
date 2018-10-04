@@ -273,14 +273,14 @@ public class FTPClient implements IFTPClient {
      * @return
      * @throws FtpException
      */
-    public Map<String, Date> downloadAllNewCsvFilesByPrefix(String remoteFolder, String extension, String localFolderPath, String prefix, Date changedSince) throws FtpException {
+    public Map<String, Date> downloadAllNewCsvFilesByPrefix(String remoteFolder, String extension, String localFolderPath, String prefix, Date changedSince, boolean wildcardSupport) throws FtpException {
         //set ftp file filter accordingly
         FTPFileFilter filter;
 
         if (changedSince != null) {
-            filter = FtpFilters.FILES_WITH_PREFIX_CHANGED_SINCE(changedSince, prefix, extension, this.hostTz);
+            filter = FtpFilters.FILES_WITH_PREFIX_CHANGED_SINCE(changedSince, prefix, extension, this.hostTz, wildcardSupport);
         } else {
-            filter = FtpFilters.JUSTFILES_WITH_PREFIX(prefix, extension);
+            filter = FtpFilters.JUSTFILES_WITH_PREFIX(prefix, extension, wildcardSupport);
         }
 
         return downloadAllFilesByFilter(remoteFolder, localFolderPath, filter);

@@ -22,7 +22,7 @@ public interface IFTPClient {
 
     public boolean connect() throws SocketException, IOException;
 
-    public Map<String, Date> downloadAllNewCsvFilesByPrefix(String remoteFolder, String extension, String localFolderPath, String prefix, Date changedSince) throws FtpException;
+    public Map<String, Date> downloadAllNewCsvFilesByPrefix(String remoteFolder, String extension, String localFolderPath, String prefix, Date changedSince, boolean wildcardSupport) throws FtpException;
 
     public Map<String, Date> downloadFile(String remoteFolder, String fileName, String localFilePath) throws FtpException;
 }

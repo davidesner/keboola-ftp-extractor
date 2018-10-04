@@ -148,7 +148,7 @@ public class Extractor {
 		// download all csv files in case of whole folder
 		if (mapping.getPrefix() != null) {// in case of files by prefix
 			return ftpClient.downloadAllNewCsvFilesByPrefix(mapping.getFtpPath(), mapping.getExtension(), outTablesPath,
-					mapping.getPrefix(), lastRun);
+					mapping.getPrefix(), lastRun, mapping.isWildcardSupport());
 		}
 		return ftpClient.downloadAllNewCsvFiles(mapping.getFtpPath(), mapping.getExtension(), outTablesPath, null,
 				lastRun);

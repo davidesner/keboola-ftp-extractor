@@ -32,6 +32,7 @@ public class FtpMapping {
 //required if incremental = 1
     private final String[] pkey;
     private String prefix;
+    private Integer prefixWildCardSupport;
 
     private String delimiter;
     private String enclosure;
@@ -51,7 +52,8 @@ public class FtpMapping {
 
     public FtpMapping(@JsonProperty("ftpPath") String ftpPath, @JsonProperty("sapiPath") String sapiPath,
             @JsonProperty("isFolder") Integer isFolder, @JsonProperty("incremental") Integer incremental, @JsonProperty("sinceLast") Integer sinceLast,
-            @JsonProperty("pkey") String[] pkey, @JsonProperty("prefix") String prefix, @JsonProperty("delimiter") String delimiter,
+            @JsonProperty("pkey") String[] pkey, @JsonProperty("prefix") String prefix,@JsonProperty("prefix_wildcard") Integer prefixWildCardSupport,
+            @JsonProperty("delimiter") String delimiter,
             @JsonProperty("enclosure") String enclosure, @JsonProperty("extension") String extension, @JsonProperty("compression") String compression,
             @JsonProperty("srcCharset") String srcCharset) {
         this.ftpPath = ftpPath;
@@ -64,6 +66,12 @@ public class FtpMapping {
             this.isFolder = isFolder;
         } else {
             this.isFolder = 1;
+        }
+ 
+        if (prefixWildCardSupport != null) {
+        	this.prefixWildCardSupport = prefixWildCardSupport;
+        } else {
+        	this.prefixWildCardSupport = 0;
         }
 //set extension, set to default csv if empty
         if (!StringUtils.isEmpty(extension)) {
@@ -221,6 +229,14 @@ public class FtpMapping {
 
 	public Integer getSinceLast() {
 		return sinceLast;
+	}
+
+	public Integer getPrefixWildCardSupport() {
+		return prefixWildCardSupport;
+	}
+
+	public boolean isWildcardSupport(){
+		return prefixWildCardSupport == 1;
 	}
 
 	@Override
