@@ -253,7 +253,8 @@ public class FtpMapping {
         FtpMapping f = (FtpMapping) obj;
         return this.ftpPath.equals(f.ftpPath) && StringUtils.equals(this.prefix, f.prefix)
                 && this.extension.endsWith(f.extension) && this.isFolder.equals(f.isFolder)
-                && this.sapiPath.equals(f.sapiPath) & this.srcCharset.equals(f.srcCharset);
+                && this.sapiPath.equals(f.sapiPath) & this.srcCharset.equals(f.srcCharset)
+                && this.prefixWildCardSupport.equals(f.prefixWildCardSupport);
     }
 
     @Override
@@ -269,6 +270,7 @@ public class FtpMapping {
         hash = 79 * hash + (this.enclosure != null ? this.enclosure.hashCode() : 0);
         hash = 79 * hash + (this.extension != null ? this.extension.hashCode() : 0);
         hash = 79 * hash + (this.srcCharset != null ? this.srcCharset.hashCode() : 0);
+        hash = 79 * hash + (this.prefixWildCardSupport != null ? this.prefixWildCardSupport.hashCode() : 0);
         return hash;
     }
 }
