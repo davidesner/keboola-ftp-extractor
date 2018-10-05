@@ -69,18 +69,22 @@
 						"description": "Download only files starting with specified prefix.",
 						"propertyOrder": 5000
 					},
-					"prefix_wildcard support": {
+					"prefix_wildcard": {
 						"type": "number",
 						"title": "Support wildcard characters",
 						"description": "Support * and ? wildcard characters in prefix string",
 						"propertyOrder": 5200,
+						"enum": [
+							1,
+							0
+						],
 						"default": 0,
 						"options": {
 							"enum_titles": [
 								"No",
 								"Yes"
 							]
-					},
+					}},
 					"ftpPath": {
 						"type": "string",
 						"title": "Remote Path",
