@@ -55,7 +55,7 @@ public class FtpFilters {
      * @param extension
      * @return
      */
-    public static final FTPFileFilter JUSTFILES_WITH_PREFIX(final String prefix, final String extension, boolean wildcardSupport) {
+    public static final FTPFileFilter JUSTFILES_WITH_PREFIX(final String prefix, final String extension, final boolean wildcardSupport) {
         return new FTPFileFilter() {
             @Override
             public boolean accept(FTPFile file) {
@@ -79,7 +79,7 @@ public class FtpFilters {
     }
 
     public static final FTPFileFilter FILES_WITH_PREFIX_CHANGED_SINCE(final Date changedSince, final String prefix, 
-    		final String extension, final TimeZone hostTz, boolean wildcardSupport) {
+    		final String extension, final TimeZone hostTz, final boolean wildcardSupport) {
         return new FTPFileFilter() {
             @Override
             public boolean accept(FTPFile file) {

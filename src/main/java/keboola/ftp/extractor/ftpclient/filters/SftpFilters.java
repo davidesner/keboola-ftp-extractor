@@ -46,7 +46,7 @@ public class SftpFilters {
      * @param extension
      * @return
      */
-    public static final SFTPfilter JUSTFILES_WITH_PREFIX(final String prefix, final String extension, boolean wildcardSupport) {
+    public static final SFTPfilter JUSTFILES_WITH_PREFIX(final String prefix, final String extension, final boolean wildcardSupport) {
         return new SFTPfilter() {
             @Override
             public boolean accept(LsEntry file) {
@@ -67,7 +67,7 @@ public class SftpFilters {
         };
     }
 
-    public static final SFTPfilter FILES_WITH_PREFIX_CHANGED_SINCE(final Date changedSince, final String prefix, final String extension, boolean wildcardSupport) {
+    public static final SFTPfilter FILES_WITH_PREFIX_CHANGED_SINCE(final Date changedSince, final String prefix, final String extension, final boolean wildcardSupport) {
         return new SFTPfilter() {
             @Override
             public boolean accept(LsEntry file) {
