@@ -64,7 +64,15 @@ public class FtpFilters {
                 }
                 String normName = file.getName();//.toLowerCase();
 
-                return !file.isDirectory() && hasExtension(file.getName(), extension) && hasPrefix(normName, prefix);
+                boolean hasPrefix = false;
+                if (wildcardSupport) {
+                	hasPrefix = hasPrefix(normName, prefix);
+                } else {
+                	//backward compatibility support
+                	hasPrefix = normName.startsWith(prefix);
+                }
+
+                return !file.isDirectory() && hasExtension(file.getName(), extension) && hasPrefix;
             }
 
         };
@@ -82,7 +90,15 @@ public class FtpFilters {
                 Calendar since = new GregorianCalendar();
                 since.setTime(changedSince);
                 Calendar fileChanged = convertDateFromTimezone(file.getTimestamp().getTime(), hostTz);
-                return !file.isDirectory() && fileChanged.after(since) && hasExtension(file.getName(), extension) && hasPrefix(normName, prefix);
+
+                boolean hasPrefix = false;
+                if (wildcardSupport) {
+                	hasPrefix = hasPrefix(normName, prefix);
+                } else {
+                	//backward compatibility support
+                	hasPrefix = normName.startsWith(prefix);
+                }
+                return !file.isDirectory() && fileChanged.after(since) && hasExtension(file.getName(), extension) && hasPrefix;
             }
 
         };
@@ -150,17 +166,15 @@ public class FtpFilters {
     }
 
     protected static boolean hasPrefix(String filename, String prefix) {
+    	String prefix_mod = prefix;
     	//escape regex special chars
- 
     	//treat as a prefix => if not specified add wildcard to the end, also helps with backward compatibility
     	if (!prefix.endsWith("*")){
-    		prefix += "*";
+    		prefix_mod = prefix + "*";
     	}
-    	
+    	prefix_mod = escapeRegex(prefix_mod);
     	//replace wildcard chars with regex
-    	String prefix_mod = prefix.replace(WILDCARD_CHAR, "\\w*").replace(SINGLE_CHAR_WILDCARD_CHAR, "\\w");   
-    	
-    	
+    	prefix_mod = prefix_mod.replace(WILDCARD_CHAR, ".*").replace(SINGLE_CHAR_WILDCARD_CHAR, ".");     	
 
     	return filename.matches(prefix_mod);
     }
@@ -172,19 +186,29 @@ public class FtpFilters {
     	int i=0;
     	boolean endsWithStar = in.endsWith("*");
     	for (String wc : wildCardParts){
+    		boolean wcPartSaved = false;
     		i++;
     		boolean endsWithQuote = wc.endsWith("?");
-    		String[] singleChars = wc.split("\\?");
+    		
+    		String[] singleChars = new String [0];
+    		if (wc.contains("?")){
+    			singleChars = wc.split("\\?");
+    		}
     		int j = 0;
+    		
     		for (String schar : singleChars){
     			j++;
-    			
-    			sb.append(Pattern.quote(schar));
+    			if (!schar.isEmpty()) {
+    				sb.append(Pattern.quote(schar));
+    			}
     			if (singleChars.length!=j || endsWithQuote){
     				sb.append(SINGLE_CHAR_WILDCARD_CHAR);
     			}
+    			wcPartSaved = true;
     		}
-    		sb.append(Pattern.quote(wc));
+    		if (!wc.isEmpty() && !wcPartSaved){
+    			sb.append(Pattern.quote(wc));
+    		}
     		if (singleChars.length!=j || endsWithStar){
     			sb.append(WILDCARD_CHAR);
     		}

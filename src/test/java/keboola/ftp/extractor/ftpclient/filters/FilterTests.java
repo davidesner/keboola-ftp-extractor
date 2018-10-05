@@ -13,7 +13,7 @@ public class FilterTests {
 	  @Test
 	  public void testSFTPAsterixMatchingWildcardPrefix() {
 		  
-		String testingFileName = "my_amazing_file_name";
+		String testingFileName = "my_amazing_file_name.csv";
 
 	    String matchingTestPrefix = "*file_name";
 	    assertTrue(SftpFilters.hasPrefix(testingFileName, matchingTestPrefix));
@@ -30,7 +30,7 @@ public class FilterTests {
 
 	  @Test
 	  public void testSFTPAsterixNotMatchingWildcardPrefix() {
-	    String testingFileName = "my_amazing_file_name";
+	    String testingFileName = "my_amazing_file_name.csv";
 
 	    String matchingTestPrefix = "*sfile_name";
 	    assertFalse(SftpFilters.hasPrefix(testingFileName, matchingTestPrefix));
@@ -45,7 +45,7 @@ public class FilterTests {
 
 	  @Test
 	  public void testSFTPCombinedMatchingWildcardPrefix() {
-	    String testingFileName = "my_amazing_file_name";
+	    String testingFileName = "my_amazing_file_name.csv";
 
 	    String matchingTestPrefix = "*f?le_name*";
 	    assertTrue(SftpFilters.hasPrefix(testingFileName, matchingTestPrefix));
@@ -59,7 +59,7 @@ public class FilterTests {
 
 	  @Test
 	  public void testSFTPBackwardCompatibilityMatchingWildcardPrefix() {
-	    String testingFileName = "my_amazing_file_name";  
+	    String testingFileName = "my_amazing_file_name.csv";  
 
 	    String matchingTestPrefixold = "my_";
 	    
@@ -76,8 +76,9 @@ public class FilterTests {
 	  
 	  @Test
 	  public void testFTPAsterixMatchingWildcardPrefix() {
+	    
 		  
-		String testingFileName = "my_amazing_file_name";
+		String testingFileName = "my_amazing_file_name.csv";
 
 	    String matchingTestPrefix = "*file_name";
 	    assertTrue(FtpFilters.hasPrefix(testingFileName, matchingTestPrefix));
@@ -94,7 +95,7 @@ public class FilterTests {
 
 	  @Test
 	  public void testFTPAsterixNotMatchingWildcardPrefix() {
-	    String testingFileName = "my_amazing_file_name";
+	    String testingFileName = "my_amazing_file_name.csv";
 
 	    String matchingTestPrefix = "*sfile_name";
 	    assertFalse(FtpFilters.hasPrefix(testingFileName, matchingTestPrefix));
@@ -109,7 +110,7 @@ public class FilterTests {
 
 	  @Test
 	  public void testFTPCombinedMatchingWildcardPrefix() {
-	    String testingFileName = "my_amazing_file_name";
+	    String testingFileName = "my_amazing_file_name.csv";
 
 	    String matchingTestPrefix = "*f?le_name*";
 	    assertTrue(FtpFilters.hasPrefix(testingFileName, matchingTestPrefix));
@@ -123,7 +124,7 @@ public class FilterTests {
 
 	  @Test
 	  public void testFTPBackwardCompatibilityMatchingWildcardPrefix() {
-	    String testingFileName = "my_amazing_file_name";  
+	    String testingFileName = "my_amazing_file_name.csv";  
 
 	    String matchingTestPrefixold = "my_";
 	    

@@ -54,8 +54,14 @@ public class SftpFilters {
                     return false;
                 }
                 SftpATTRS attrs = file.getAttrs();
-
-                return !attrs.isDir() && hasExtension(file.getFilename(), extension) && file.getFilename().startsWith(prefix);
+                boolean hasPrefix = false;
+                if (wildcardSupport) {
+                	hasPrefix = hasPrefix(file.getFilename(), prefix);
+                } else {
+                	//backward compatibility support
+                	hasPrefix = file.getFilename().startsWith(prefix);
+                }
+                return !attrs.isDir() && hasExtension(file.getFilename(), extension) && hasPrefix;
             }
 
         };
@@ -72,7 +78,16 @@ public class SftpFilters {
                 Calendar since = new GregorianCalendar();
                 since.setTime(changedSince);
                 Calendar fileChanged = mTimeToCalendar(attrs.getMTime());
-                return !attrs.isDir() && fileChanged.after(since) && hasExtension(file.getFilename(), extension) && file.getFilename().startsWith(prefix);
+                
+                boolean hasPrefix = false;
+                if (wildcardSupport) {
+                	hasPrefix = hasPrefix(file.getFilename(), prefix);
+                } else {
+                	//backward compatibility support
+                	hasPrefix = file.getFilename().startsWith(prefix);
+                }
+                
+                return !attrs.isDir() && fileChanged.after(since) && hasExtension(file.getFilename(), extension) && hasPrefix;
             }
 
         };
@@ -109,17 +124,15 @@ public class SftpFilters {
     }
 
     protected static boolean hasPrefix(String filename, String prefix) {
+    	String prefix_mod = prefix;
     	//escape regex special chars
- 
     	//treat as a prefix => if not specified add wildcard to the end, also helps with backward compatibility
     	if (!prefix.endsWith("*")){
-    		prefix += "*";
+    		prefix_mod = prefix + "*";
     	}
-    	
+    	prefix_mod = escapeRegex(prefix_mod);
     	//replace wildcard chars with regex
-    	String prefix_mod = prefix.replace(WILDCARD_CHAR, "\\w*").replace(SINGLE_CHAR_WILDCARD_CHAR, "\\w");   
-    	
-    	
+    	prefix_mod = prefix_mod.replace(WILDCARD_CHAR, ".*").replace(SINGLE_CHAR_WILDCARD_CHAR, ".");     	
 
     	return filename.matches(prefix_mod);
     }
@@ -131,19 +144,29 @@ public class SftpFilters {
     	int i=0;
     	boolean endsWithStar = in.endsWith("*");
     	for (String wc : wildCardParts){
+    		boolean wcPartSaved = false;
     		i++;
     		boolean endsWithQuote = wc.endsWith("?");
-    		String[] singleChars = wc.split("\\?");
+    		
+    		String[] singleChars = new String [0];
+    		if (wc.contains("?")){
+    			singleChars = wc.split("\\?");
+    		}
     		int j = 0;
+    		
     		for (String schar : singleChars){
     			j++;
-    			
-    			sb.append(Pattern.quote(schar));
+    			if (!schar.isEmpty()) {
+    				sb.append(Pattern.quote(schar));
+    			}
     			if (singleChars.length!=j || endsWithQuote){
     				sb.append(SINGLE_CHAR_WILDCARD_CHAR);
     			}
+    			wcPartSaved = true;
     		}
-    		sb.append(Pattern.quote(wc));
+    		if (!wc.isEmpty() && !wcPartSaved){
+    			sb.append(Pattern.quote(wc));
+    		}
     		if (singleChars.length!=j || endsWithStar){
     			sb.append(WILDCARD_CHAR);
     		}
