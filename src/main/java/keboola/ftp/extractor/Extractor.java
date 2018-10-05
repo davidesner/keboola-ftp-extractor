@@ -39,6 +39,7 @@ import keboola.ftp.extractor.utils.MergeException;
  * @created 2016
  */
 public class Extractor {
+	private static final String VERSION = "1.3.1";
 	final static Logger log = Logger.getLogger(Extractor.class);
 	private static final Charset DEFAUT_CHARSET = StandardCharsets.UTF_8;
 	
@@ -65,7 +66,7 @@ public class Extractor {
 		Date lastRun = null;
 		Date currDate;
 		/* Download all files and generate manifests */
-		
+		log.info("Running version " + VERSION);
 		log.info("Downloading files...");
 		int count = 0;
 		try {
